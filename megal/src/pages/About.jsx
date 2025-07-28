@@ -1,5 +1,6 @@
 import React from "react";
 import heroImage from "../assets/home.jpg";
+import license from "../assets/license.pdf"
 const AboutUs = () => {
   return (
     <section className="bg-white text-blue-900 ">
@@ -109,7 +110,25 @@ const AboutUs = () => {
 
        
       </div>
+
+<section className="p-6 bg-white text-blue-900 max-w-9xl mx-auto">
+  <h2 className="text-2xl font-bold mb-4">Our Licenses</h2>
+  <p className="mb-4 text-gray-700">We are fully certified and licensed by the appropriate government authorities.</p>
+
+  <div className="w-full h-[600px] border shadow-lg rounded overflow-hidden">
+    <iframe
+      src={license}
+      title="Company License"
+      width="100%"
+      height="100%"
+      className="border-none"
+    ></iframe>
+  </div>
+</section>
+
+
     </section>
+    
   );
 };
 
