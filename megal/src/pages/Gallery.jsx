@@ -6,8 +6,8 @@ import project4 from "../assets/project4.jpg";
 import park2 from "../assets/park2.jpg";
 import v1 from "../assets/v1.mp4";
 import v2 from "../assets/v2.mp4";
-import v3 from "../assets/v3.mp4";
-import v4 from "../assets/v4.mp4";
+import v3 from "../assets/v1.mp4";
+import v4 from "../assets/v2.mp4";
 import v5 from "../assets/v5.mp4";
 import v6 from "../assets/v6.mp4";
 const Gallery = () => {
