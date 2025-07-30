@@ -6,7 +6,7 @@ import { testimonials as testimonials2 } from "../components/mock/mock";
 import { contactInfo } from "../components/mock/mock";
 import heroImage from "../assets/home.jpg";
 import park from "../assets/park.jpg"
-
+import { Link } from "react-router-dom";
 
 
 export default function Home() {
@@ -141,34 +141,45 @@ export default function Home() {
               </div>
             ))}
           </div>
+         
         </div>
       </section>
 
-      <section className="py-16 bg-white" id="testimonials">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
-            Client Testimonials
-          </h2>
+      <section className="py-20 bg-gradient-to-b from-white to-blue-50" id="testimonials">
+  <div className="max-w-7xl mx-auto px-6">
+    <h2 className="text-4xl font-bold text-center text-blue-800 mb-14">
+      What Our Clients Say
+    </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials2.map((t) => (
-              <div
-                key={t.id}
-                className="bg-gray-50 rounded-lg shadow hover:shadow-md transition p-6 flex flex-col"
-              >
-                <div className="text-gray-600 italic mb-4 text-sm">
-                  “{t.comment}”
-                </div>
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {testimonials2.map((t) => (
+        <div
+          key={t.id}
+          className="bg-white border border-blue-100 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 p-6 flex flex-col"
+        >
+          <p className="text-gray-600 italic mb-4 text-sm leading-relaxed">
+            “{t.comment}”
+          </p>
 
-                <div className="mt-auto">
-                  <div className="font-semibold text-blue-700">{t.name}</div>
-                  <div className="text-sm text-gray-500">{t.company}</div>
-                </div>
-              </div>
-            ))}
+          <div className="mt-auto">
+            <h4 className="font-semibold text-blue-700">{t.name}</h4>
+            <p className="text-sm text-gray-500">{t.company}</p>
           </div>
         </div>
-      </section>
+      ))}
+    </div>
+
+    <div className="text-center mt-12">
+      <Link
+        to="/testimonials"
+        className="inline-block bg-blue-700 text-white font-semibold px-6 py-3 rounded shadow hover:bg-blue-800 transition"
+      >
+        Explore More Testimonials
+      </Link>
+    </div>
+  </div>
+</section>
+
 
       <section className="py-16 bg-blue-50 text-blue-900" id="contact">
         <div className="max-w-4xl mx-auto px-4">
