@@ -15,6 +15,8 @@ import AboutUs from './pages/About.jsx'
 import Servicess from './pages/Services.jsx'
 import ContactUs from './pages/ContactUs.jsx'
 import Project from './pages/Project.jsx'
+import GalleryAdmin from './admin/Gallery.jsx'
+import Testimonialss from './admin/Testimonials.jsx'
 function App() {
   return (
     <>
@@ -33,9 +35,9 @@ function App() {
            <Route path="/admin/edit-about" element={<EditAbout />} />
            <Route path="/admin/services" element={<Services />} />
            <Route path="/admin/projects" element={<Projects />} />
-           <Route path="/admin/testimonials" element={<Testimonials />} />
+           <Route path="/admin/testimonials" element={<Testimonialss />} />
            <Route path="/admin/contact" element={<ContactSettings />} />
-           <Route path="/admin/gallery" element={<Gallery />} />
+           <Route path="/admin/gallery" element={<GalleryAdmin />} />
     </Routes>
 
       

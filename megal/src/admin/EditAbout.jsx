@@ -2,25 +2,65 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function EditAbout() {
-  const [text, setText] = useState("");
+  const [about, setAbout] = useState({
+    overview: "",
+    mission: "",
+    vision: "",
+    goal: "",
+    licenseUrl: "",
+  });
+  const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch current about text on load
+  const token = localStorage.getItem("token");
+
+  // Load current about info
   useEffect(() => {
     axios.get("/api/about")
-      .then(res => setText(res.data.text))
-      .catch(() => alert("Failed to load current content"))
+      .then((res) => setAbout(res.data))
+      .catch(() => alert("Failed to load About content"))
       .finally(() => setLoading(false));
   }, []);
 
-  // Save edited content
-  const handleSave = async () => {
+  const handleChange = (e) => {
+    setAbout({ ...about, [e.target.name]: e.target.value });
+  };
+
+  const handlePDFUpload = async () => {
+    if (!pdfFile) return null;
+
+    const formData = new FormData();
+    formData.append("file", pdfFile);
+
     try {
-      await axios.put("/api/about", { text }, {
+      const res = await axios.post("/api/upload", formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
+      return res.data.url; // assuming server returns { url: "..." }
+    } catch {
+      alert("Failed to upload license PDF");
+      return null;
+    }
+  };
+
+  const handleSave = async () => {
+    let uploadedUrl = about.licenseUrl;
+    if (pdfFile) {
+      const result = await handlePDFUpload();
+      if (result) uploadedUrl = result;
+    }
+
+    try {
+      await axios.put(
+        "/api/about",
+        { ...about, licenseUrl: uploadedUrl },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       alert("About section updated successfully!");
     } catch {
       alert("Failed to update.");
@@ -36,12 +76,41 @@ export default function EditAbout() {
           <p className="text-gray-600">Loading...</p>
         ) : (
           <>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="w-full h-60 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter company profile text..."
-            ></textarea>
+            {["overview", "mission", "vision", "goal"].map((field) => (
+              <div key={field} className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 capitalize mb-1">
+                  {field}
+                </label>
+                <textarea
+                  name={field}
+                  value={about[field]}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            ))}
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                License PDF (optional)
+              </label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => setPdfFile(e.target.files[0])}
+                className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-white file:bg-blue-600 hover:file:bg-blue-700"
+              />
+              {about.licenseUrl && (
+                <p className="text-sm text-blue-600 mt-1">
+                  Current License:{" "}
+                  <a href={about.licenseUrl} target="_blank" rel="noreferrer" className="underline">
+                    View PDF
+                  </a>
+                </p>
+              )}
+            </div>
+
             <button
               onClick={handleSave}
               className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
