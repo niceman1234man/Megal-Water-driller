@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 
-const GalleryImageSchema = new mongoose.Schema({
-  filename: String,
-  url: String,
-  uploadedAt: { type: Date, default: Date.now }
-});
+const GallerySchema = new mongoose.Schema(
+  {
+    location: { type: String, required: true, trim: true },
+    client: { type: String, required: true, trim: true },
+    url: { type: String, required: true }, // Path to image/video file
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("GalleryImage", GalleryImageSchema);
+module.exports = mongoose.model("Gallery", GallerySchema);

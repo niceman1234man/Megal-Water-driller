@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axiosInstance from "../axiosInstance";
 import axios from "axios";
 
 export default function ContactSettings() {
@@ -12,8 +13,9 @@ export default function ContactSettings() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("/api/contact").then((res) => {
+    axios.get(" http://localhost:5000/api/contact").then((res) => {
       if (res.data) {
+        console.log(res.data)
         setInfo({
           phones: res.data.phones || [""],
           emails: res.data.emails || [""],
@@ -25,9 +27,10 @@ export default function ContactSettings() {
     });
   }, []);
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     try {
-      await axios.put("/api/contact", info, {
+      await axios.put("http://localhost:5000/api/contact", info, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert("Contact info updated!");

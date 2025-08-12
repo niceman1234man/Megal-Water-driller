@@ -9,7 +9,7 @@ export default function GalleryAdmin() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("/api/gallery").then((res) => setMediaList(res.data));
+    axios.get("http://localhost:5000/api/gallery").then((res) => setMediaList(res.data));
   }, []);
 
   const resetForm = () => {
@@ -33,10 +33,10 @@ export default function GalleryAdmin() {
       };
 
       if (editingId) {
-        const res = await axios.put(`/api/gallery/${editingId}`, data, config);
+        const res = await axios.put(`http://localhost:5000/api/gallery/${editingId}`, data, config);
         setMediaList(mediaList.map((m) => (m._id === editingId ? res.data : m)));
       } else {
-        const res = await axios.post("/api/gallery", data, config);
+        const res = await axios.post("http://localhost:5000/api/gallery", data, config);
         setMediaList([res.data, ...mediaList]);
       }
       resetForm();
@@ -48,7 +48,7 @@ export default function GalleryAdmin() {
   const deleteMedia = async (id) => {
     if (!window.confirm("Delete this item?")) return;
     try {
-      await axios.delete(`/api/gallery/${id}`, {
+      await axios.delete(`http://localhost:5000/api/gallery/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMediaList(mediaList.filter((m) => m._id !== id));
@@ -115,9 +115,9 @@ export default function GalleryAdmin() {
           {mediaList.map((item) => (
             <div key={item._id} className="border p-3 rounded shadow">
               {item.url.endsWith(".mp4") ? (
-                <video src={item.url} controls className="w-full h-48 object-cover rounded" />
+                <video src={`http://localhost:5000${item.url}`} controls className="w-full h-48 object-cover rounded" />
               ) : (
-                <img src={item.url} alt="media" className="w-full h-48 object-cover rounded" />
+                <img src={`http://localhost:5000${item.url}`} alt="media" className="w-full h-48 object-cover rounded" />
               )}
               <div className="mt-2">
                 <p className="text-sm text-gray-700">

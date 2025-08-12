@@ -1,37 +1,79 @@
 const express = require("express");
-const router = express.Router();
-const GalleryImage = require("../models/GalleryImage");
-const auth = require("../middleware/auth");
 const multer = require("multer");
 const path = require("path");
+const Gallery= require("../models/GallaryImage");
 
-// File upload setup
+const router = express.Router();
+
+// Storage config
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // uploads folder at project root
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
 const upload = multer({ storage });
 
-// GET all images
-router.get("/", async (req, res) => {
-  const images = await GalleryImage.find().sort({ uploadedAt: -1 });
-  res.json(images);
+// Get all media
+router.get("/gallery", async (req, res) => {
+  try {
+    const media = await Gallery.find().sort({ createdAt: -1 });
+    res.json(media);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// UPLOAD image
-router.post("/", auth, upload.single("image"), async (req, res) => {
-  const newImage = new GalleryImage({
-    filename: req.file.filename,
-    url: `/uploads/${req.file.filename}`,
-  });
-  const saved = await newImage.save();
-  res.json(saved);
+// Create media
+router.post("/gallery", upload.single("file"), async (req, res) => {
+  try {
+    const { location, client } = req.body;
+    if (!req.file) return res.status(400).json({ error: "File is required" });
+
+    const newMedia = new Gallery({
+      location,
+      client,
+      url: `/uploads/${req.file.filename}`,
+    });
+
+    await newMedia.save();
+    res.json(newMedia);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// DELETE image
-router.delete("/:id", auth, async (req, res) => {
-  await GalleryImage.findByIdAndDelete(req.params.id);
-  res.sendStatus(204);
+// Update media
+router.put("/gallery/:id", upload.single("file"), async (req, res) => {
+  try {
+    const { location, client } = req.body;
+    const updateData = { location, client };
+
+    if (req.file) {
+      updateData.url = `/uploads/${req.file.filename}`;
+    }
+
+    const updated = await Gallery.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
+
+    if (!updated) return res.status(404).json({ error: "Media not found" });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete media
+router.delete("/gallery/:id", async (req, res) => {
+  try {
+    await Gallery.findByIdAndDelete(req.params.id);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

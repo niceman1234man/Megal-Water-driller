@@ -1,10 +1,16 @@
-import React from "react";
-import rig from "../assets/rig.jpg";
-import loader from "../assets/loader.jpg";
-import compressor from "../assets/compressor.jpg";
-import park from "../assets/park.jpg";
+import React ,{useState,useEffect} from "react";
 
+import axios from "axios"
 const Services = () => {
+  const [assets, setAssets] = useState([]);
+   const [equipments, setEquipments] = useState([])
+   const [services, setServices] = useState([]);
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/services").then((res)=> setServices(res.data));
+ axios.get("http://localhost:5000/api/assets").then((res) => setAssets(res.data));
+  axios.get("http://localhost:5000/api/equipments")
+      .then((res) => setEquipments(res.data));
+    }, []);
   const services2 = [
     {
       id: 1,
@@ -66,40 +72,52 @@ const Services = () => {
 
         <div className="max-w-7xl mx-auto py-4">
           {/* Service Cards */}
+          <h2 className="text-black text-4xl text-center py-4">Main Services</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services2.map((service) => (
-              <div
-                key={service.id}
-                className="bg-blue-50 border shadow rounded-lg p-6 hover:shadow-lg transition"
-              >
-                <div className="text-4xl mb-4 text-blue-700">{service.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-blue-800">{service.title}</h3>
-                <p className="text-gray-700">{service.description}</p>
-              </div>
-            ))}
+            {
+              services.length === 0 ? (
+                <p className="text-gray-500">No services available</p>
+              ) : (
+                services.map((service) => (
+                  <div
+                    key={service.id}
+                    className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600">
+                    <div className="text-4xl mb-4 text-blue-700" >{service.icon}</div>
+                    <h3 className="text-xl font-semibold mb-2 text-blue-800">{service.title}</h3>
+                    <p className="text-gray-700">{service.description}</p>
+                  </div>
+                ))
+              )
+            }
           </div>
 
+            
+
           <div className="text-black text-center py-6">
-            <h1 className="text-4xl font-bold">Our Assets</h1>
+            <h1 className="text-4xl font-semibold py-5">Our Assets</h1>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div>
-                <h3 className="py-2 text-2xl">Trucks</h3>
-                {/* ✅ Uniform image size */}
-                <img src={park} alt="trucks" className="w-full h-56 object-cover rounded" />
-              </div>
-              <div>
-                <h3 className="py-2 text-2xl">Rig</h3>
-                <img src={rig} alt="Rig" className="w-full h-56 object-cover rounded" />
-              </div>
-              <div>
-                <h3 className="py-2 text-2xl">Loader</h3>
-                <img src={loader} alt="loader" className="w-full h-56 object-cover rounded" />
-              </div>
-              <div>
-                <h3 className="py-2 text-2xl">Compressor</h3>
-                <img src={compressor} alt="compressor" className="w-full h-56 object-cover rounded" />
-              </div>
+         
+                {
+                  assets.length === 0 ? (
+                    <p className="text-gray-500">No assets available</p>
+                  ) : (
+                    assets.map((asset) => (
+                      <div key={asset._id} className="border p-4 rounded-lg shadow hover:shadow-lg transition">
+                        <h3 className="text-xl font-semibold mb-2">{asset.name}</h3>
+                        {asset.image && (
+                          <img
+                            src={`http://localhost:5000${asset.image}`}
+                            alt={asset.name}
+                            className="w-full h-48 object-cover rounded mb-2"
+                          />
+                        )}
+                       
+                      </div>
+                    ))
+                  )}
+               
+              
             </div>
 
             <section className="p-6 bg-white text-blue-900 max-w-7xl mx-auto">
@@ -121,83 +139,31 @@ const Services = () => {
                     </tr>
                   </thead>
                   <tbody className="text-gray-800">
-                    {[
-                      {
-                        id: 1,
-                        type: "Drilling Rig",
-                        brand: "CRM",
-                        model: "800",
-                        year: 2012,
-                        unit: "pcs",
-                        qty: 1,
-                        description: "Hydraulic rig top head drive with 45 Tons pull up capacity...",
-                      },
-                      {
-                        id: 2,
-                        type: "Mud pump",
-                        brand: "Ballerini",
-                        model: "7x8",
-                        year: 2012,
-                        unit: "pcs",
-                        qty: 1,
-                        description: "Duplex mud pump with max capacity 1,560 l/min at 20 bar...",
-                      },
-                      {
-                        id: 3,
-                        type: "Portable Air Compressor",
-                        brand: "Atlas Copco",
-                        model: "XRVS 450",
-                        year: 1991,
-                        unit: "pcs",
-                        qty: 1,
-                        description: "Capacity of 25,000 l/min and 28 bar pressure...",
-                      },
-                      {
-                        id: 4, // ✅ Fixed duplicate ID
-                        type: "Foam Injector",
-                        brand: "",
-                        model: "",
-                        year: 2012,
-                        unit: "pcs",
-                        qty: 1,
-                        description: "Foam pump, mounted on the rig, hydraulically connected...",
-                      },
-                      {
-                        id: 5,
-                        type: "Truck with crane",
-                        brand: "Iveco / Fassi",
-                        model: "Magirus 256 D26 / F300",
-                        year: 2010,
-                        unit: "pcs",
-                        qty: 1,
-                        description: "Dump truck with 8 m³ tipper and crane Fassi F300...",
-                      },
-                      // ... rest of items
-                    ].map((item, index) => (
-                      <tr key={item.id} className="hover:bg-blue-50 transition duration-200">
-                        {/* ✅ Smooth row hover effect added */}
-                        <td className="border px-4 py-2">{index + 1}</td>
-                        <td className="border px-4 py-2">{item.type}</td>
-                        <td className="border px-4 py-2">{item.brand}</td>
-                        <td className="border px-4 py-2">{item.model}</td>
-                        <td className="border px-4 py-2">{item.year}</td>
-                        <td className="border px-4 py-2">{item.unit}</td>
-                        <td className="border px-4 py-2">{item.qty}</td>
-                        <td className="border px-4 py-2">{item.description}</td>
-                      </tr>
-                    ))}
+                    {
+                    equipments.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="text-center py-4">No equipment available</td>
+                    </tr>
+                    ) : (
+                      equipments.map((item, index) => (
+                        <tr key={item.id} className="hover:bg-blue-50 transition duration-200">
+                          <td className="border px-4 py-2">{index + 1}</td>
+                          <td className="border px-4 py-2">{item.type}</td>
+                          <td className="border px-4 py-2">{item.brand}</td>
+                          <td className="border px-4 py-2">{item.model}</td>
+                          <td className="border px-4 py-2">{item.year}</td>
+                          <td className="border px-4 py-2">{item.unit}</td>
+                          <td className="border px-4 py-2">{item.qty}</td>
+                          <td className="border px-4 py-2">{item.description}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
             </section>
-
-            {/* 💡 Optional: Add back button or breadcrumb here for navigation if needed */}
-            {/* <div className="text-center mt-6">
-              <Link to="/" className="text-blue-600 hover:underline">
-                ← Back to Home
-              </Link>
-            </div> */}
-
+                    
+                  
           </div>
         </div>
       </div>

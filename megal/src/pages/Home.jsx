@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { services as mockServices } from "../components/mock/mock";
 import { projects as mockProjects } from "../components/mock/mock";
 import { testimonials as mockTestimonials } from "../components/mock/mock";
 import { contactInfo } from "../components/mock/mock";
@@ -16,16 +15,20 @@ export default function Home() {
 useEffect(() => {
   axios.get("http://localhost:5000/api/services") // updated URL
     .then((res) => setServices(res.data));
+    axios.get("http://localhost:5000/api/contact").then((res) => setContact(res.data)).catch(() => setContact({}));
+  axios.get("http://localhost:5000/api/projects")
+    .then((res) => setProjects(res.data.slice(0, 3)))
+    .catch(() => setProjects([]));
 }, []);
 
-  // useEffect(() => {
+  useEffect(() => {
   //   axios.get("/api/services").then((res) => setServices(res.data)).catch(() => setServices([]));
   //   axios.get("/api/projects").then((res) => setProjects(res.data.slice(0, 3))).catch(() => setProjects([]));
   //   axios.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
-  //   axios.get("/api/contact").then((res) => setContact(res.data)).catch(() => setContact({}));
-  // }, []);
+    
+  }, []);
 
-  const servicesToRender = Array.isArray(services) && services.length > 0 ? services : mockServices;
+
   const projectsToRender = Array.isArray(projects) && projects.length > 0 ? projects : mockProjects;
   const testimonialsToRender = Array.isArray(testimonials) && testimonials.length > 0 ? testimonials : mockTestimonials;
 
@@ -36,16 +39,27 @@ useEffect(() => {
         style={{ backgroundImage: `url(${heroImage})` }}
         id="home"
       >
+       
         <div className="absolute top-0 left-0 right-0 z-20 bg-blue-800 bg-opacity-90 text-white text-xs md:text-sm px-4 py-2 flex flex-col md:flex-row justify-center items-center gap-2">
-          <p>📞 +251-907171710 / +251-934227962</p>
-          <p>📧 muauzamare79@gmail.com / yoseftamiratshiferaw@gmail.com</p>
-          <p>📍 Yeka Subcity, Woreda 09, Addis Ababa, Ethiopia</p>
+          {
+            contact && contact.phones && contact.phones.length > 0 && (
+              <p>📞 {contact.phones.join(" / ")}</p>
+          )}
+          
+          {contact && contact.emails && contact.emails.length > 0 && (
+            <p>📧 {contact.emails.join(" / ")}</p>
+          )}
+     
+          {contact && contact.address && (
+            <p>🏠 {contact.address}</p>
+          )}
+         
         </div>
 
         <div className="absolute inset-0 bg-blue-600 bg-opacity-70 flex items-center justify-center text-white text-center px-4 pt-20 z-10">
           <div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-              Welcome to Megal Water Drilling
+              Welcome <br />to <br />Megal Water Drilling
             </h1>
             <p className="text-lg md:text-2xl max-w-2xl mx-auto">
               Reliable, sustainable, and affordable water solutions across Ethiopia.
@@ -86,7 +100,7 @@ useEffect(() => {
           <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Our Services</h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {servicesToRender.map((service) => (
+            {services.map((service) => (
               <div
                 key={service.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600"
@@ -103,17 +117,17 @@ useEffect(() => {
       </section>
 
       <section className="py-16 bg-gray-50" id="projects">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Recent Projects</h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projectsToRender.map((project) => (
+            {projects.map((project) => (
               <div
                 key={project.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
+                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600 overflow-hidden"
               >
                 <img
-                  src={project.image}
+                  src={`http://localhost:5000${project.image}`}
                   alt={project.title}
                   className="w-full h-48 object-cover"
                 />
@@ -170,14 +184,26 @@ useEffect(() => {
 
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div>
+           
+          
+          
+     
+        
               <p className="mb-3">
-                <strong>📞 Phone:</strong> {contactInfo.phone}
+                 {
+            contact && contact.phones && contact.phones.length > 0 && (
+              <p>📞 {contact.phones.join(" / ")}</p>
+          )}
               </p>
               <p className="mb-3">
-                <strong>📧 Email:</strong> {contactInfo.email}
+              {contact && contact.emails && contact.emails.length > 0 && (
+            <p>📧 {contact.emails.join(" / ")}</p>
+          )}
               </p>
               <p className="mb-3">
-                <strong>📍 Address:</strong> {contactInfo.address}
+                  {contact && contact.address && (
+            <p>🏠 {contact.address}</p>
+          )}
               </p>
             </div>
 

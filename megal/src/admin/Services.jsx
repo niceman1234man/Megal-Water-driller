@@ -6,7 +6,7 @@ export default function Services() {
   const [form, setForm] = useState({ title: "", description: "" });
   const [editServiceId, setEditServiceId] = useState(null);
 
-  const [equipments, setEquipments] = useState([]);
+  const [equipments, setEquipments] = useState([])
   const [equipmentForm, setEquipmentForm] = useState({
     type: "",
     brand: "",
@@ -18,24 +18,32 @@ export default function Services() {
   });
   const [editEquipmentId, setEditEquipmentId] = useState(null);
 
+  const [assets, setAssets] = useState([]);
+  const [assetForm, setAssetForm] = useState({ name: "", image: null });
+  const [editAssetId, setEditAssetId] = useState(null);
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/services").then((res) => setServices(res.data));
-    axios.get("http://localhost:5000/api/equipments").then((res) => setEquipments(Array.isArray(res.data) ? res.data : []));
+    axios.get("http://localhost:5000/api/equipments")
+      .then((res) => setEquipments(res.data));
+    axios.get("http://localhost:5000/api/assets").then((res) => setAssets(res.data));
   }, []);
 
-  const addOrUpdateService = async () => {
+  const addOrUpdateService = async (e) => {
+    e.preventDefault();
+    console.log(equipments)
     if (!form.title) return alert("Title is required.");
     try {
       if (editServiceId) {
-        await axios.put(`/api/services/${editServiceId}`, form, {
+        await axios.put(`http://localhost:5000/api/services/${editServiceId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setServices(services.map(s => s._id === editServiceId ? { ...form, _id: editServiceId } : s));
         setEditServiceId(null);
       } else {
-        const res = await axios.post("/api/services", form, {
+        const res = await axios.post("http://localhost:5000/api/services", form, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setServices([...services, res.data]);
@@ -49,7 +57,7 @@ export default function Services() {
   const deleteService = async (id) => {
     if (!window.confirm("Delete this service?")) return;
     try {
-      await axios.delete(`/api/services/${id}`, {
+      await axios.delete(`http://localhost:5000/api/services/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setServices(services.filter((s) => s._id !== id));
@@ -63,16 +71,17 @@ export default function Services() {
     setEditServiceId(s._id);
   };
 
-  const addOrUpdateEquipment = async () => {
+  const addOrUpdateEquipment = async (e) => {
+    e.preventDefault();
     try {
       if (editEquipmentId) {
-        await axios.put(`/api/equipments/${editEquipmentId}`, equipmentForm, {
+        await axios.put(`http://localhost:5000/api/equipments/${editEquipmentId}`, equipmentForm, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEquipments(equipments.map(eq => eq._id === editEquipmentId ? { ...equipmentForm, _id: editEquipmentId } : eq));
         setEditEquipmentId(null);
       } else {
-        const res = await axios.post("/api/equipments", equipmentForm, {
+        const res = await axios.post("http://localhost:5000/api/equipments", equipmentForm, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEquipments([...equipments, res.data]);
@@ -91,7 +100,7 @@ export default function Services() {
   const deleteEquipment = async (id) => {
     if (!window.confirm("Delete this equipment?")) return;
     try {
-      await axios.delete(`/api/equipments/${id}`, {
+      await axios.delete(`http://localhost:5000/api/equipments/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEquipments(equipments.filter((eq) => eq._id !== id));
@@ -100,11 +109,60 @@ export default function Services() {
     }
   };
 
+  const addOrUpdateAsset = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("name", assetForm.name);
+    if (assetForm.image) data.append("image", assetForm.image);
+
+    try {
+      if (editAssetId) {
+        const res = await axios.put(`http://localhost:5000/api/assets/${editAssetId}`, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setAssets(assets.map(a => a._id === editAssetId ? res.data : a));
+        setEditAssetId(null);
+      } else {
+        const res = await axios.post("http://localhost:5000/api/assets", data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setAssets([...assets, res.data]);
+      }
+      setAssetForm({ name: "", image: null });
+    } catch {
+      alert("Failed to save asset");
+    }
+  };
+
+  const deleteAsset = async (id) => {
+    if (!window.confirm("Delete this asset?")) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/assets/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAssets(assets.filter((a) => a._id !== id));
+    } catch {
+      alert("Failed to delete asset");
+    }
+  };
+
+  const handleEditAsset = (asset) => {
+    setAssetForm({ name: asset.name, image: null });
+    setEditAssetId(asset._id);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow">
         <h1 className="text-2xl font-bold mb-6 text-blue-700">Manage Services</h1>
 
+        {/* Services Section */}
         <div className="mb-6">
           <input
             type="text"
@@ -142,6 +200,7 @@ export default function Services() {
           ))}
         </div>
 
+        {/* Equipment Section */}
         <hr className="my-10" />
         <h2 className="text-2xl font-bold mb-4 text-blue-700">Manage Equipment</h2>
 
@@ -195,6 +254,48 @@ export default function Services() {
             ))}
           </tbody>
         </table>
+
+        {/* Assets Section */}
+        <hr className="my-10" />
+        <h2 className="text-2xl font-bold mb-4 text-blue-700">Manage Assets</h2>
+
+        <div className="grid gap-3 mb-6">
+          <input
+            type="text"
+            placeholder="Asset Name"
+            value={assetForm.name}
+            onChange={(e) => setAssetForm({ ...assetForm, name: e.target.value })}
+            className="border p-2 rounded"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setAssetForm({ ...assetForm, image: e.target.files[0] })}
+            className="border p-2 rounded"
+          />
+          <button
+            onClick={addOrUpdateAsset}
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+          >
+            {editAssetId ? "Update Asset" : "Add Asset"}
+          </button>
+        </div>
+
+        <div className="grid gap-4">
+          {assets.map((a) => (
+            <div key={a._id} className="flex items-center justify-between border-b py-2">
+              <div>
+                
+                <p className="font-medium text-gray-800">{a.name}</p>
+                {a.image && <img  src={`http://localhost:5000${a.image}`} alt={a.name} className="w-24 h-24 object-cover rounded mt-1" />}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => handleEditAsset(a)} className="text-blue-600 text-sm hover:underline">Edit</button>
+                <button onClick={() => deleteAsset(a._id)} className="text-red-600 text-sm hover:underline">Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ export default function Projects() {
 
     try {
       if (editingId) {
-        const res = await axios.put(`/api/projects/${editingId}`, data, {
+        const res = await axios.put(`http://localhost:5000/api/projects/${editingId}`, data, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ export default function Projects() {
         setProjects(projects.map(p => (p._id === editingId ? res.data : p)));
         setEditingId(null);
       } else {
-        const res = await axios.post("/api/projects", data, {
+        const res = await axios.post("http://localhost:5000/api/projects", data, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ export default function Projects() {
   const deleteProject = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      await axios.delete(`/api/projects/${id}`, {
+      await axios.delete(`http://localhost:5000/api/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects(projects.filter(p => p._id !== id));
@@ -148,7 +148,7 @@ export default function Projects() {
               </div>
               {project.image && (
                 <img
-                  src={project.image}
+                  src={`http://localhost:5000${project.image}`}
                   alt="project"
                   className="w-24 h-24 object-cover rounded shadow"
                 />

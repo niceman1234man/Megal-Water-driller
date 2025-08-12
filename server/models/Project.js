@@ -5,7 +5,8 @@ const ProjectSchema = new mongoose.Schema({
   description: String,
   location: String,
   image: String, // path to uploaded image
-  createdAt: { type: Date, default: Date.now }
-});
+
+} ,{ timestamps: true }
+);
 
 module.exports = mongoose.model("Project", ProjectSchema);

@@ -4,23 +4,38 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const PORT = 5000;
+const mongoose = require("mongoose");
+const contactInfoRoutes = require('./routes/contactInfo');
+const servicesRoutes = require('./routes/services');
+const projectsRoutes = require('./routes/projects');
+const galleryRoutes = require('./routes/gallary');
+
+mongoose.connect("mongodb://127.0.0.1:27017/megalDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ Connected to MongoDB locally"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
+
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Adjust this to your frontend URL
+  methods: [ 'GET', 'POST', 'PUT', 'DELETE'],
+  // credentials: true // Allow credentials if needed
+}));
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+app.use('/api',contactInfoRoutes);
+app.use('/api',servicesRoutes)
+app.use('/api',projectsRoutes);
+app.use('/api',galleryRoutes);
+
+
 
 // Sample services data
 const equipments=[
-                      {
-                        id: 1,
-                        type: "Drilling Rig",
-                        brand: "CRM",
-                        model: "800",
-                        year: 2012,
-                        unit: "pcs",
-                        qty: 1,
-                        description: "Hydraulic rig top head drive with 45 Tons pull up capacity...",
-                      },
+                     
                       {
                         id: 2,
                         type: "Mud pump",

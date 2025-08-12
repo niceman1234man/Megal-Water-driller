@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Project = require("../models/Project");
-const auth = require("../middleware/auth");
+
 const multer = require("multer");
 const path = require("path");
 
@@ -13,13 +13,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // GET all projects
-router.get("/", async (req, res) => {
+router.get("/projects", async (req, res) => {
   const projects = await Project.find().sort({ createdAt: -1 });
   res.json(projects);
 });
 
 // ADD new project
-router.post("/", auth, upload.single("image"), async (req, res) => {
+router.post("/projects", upload.single("image"), async (req, res) => {
   const newProject = new Project({
     ...req.body,
     image: req.file ? `/uploads/${req.file.filename}` : "",
@@ -29,7 +29,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
 });
 
 // DELETE project
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/projects/:id", async (req, res) => {
   await Project.findByIdAndDelete(req.params.id);
   res.sendStatus(204);
 });

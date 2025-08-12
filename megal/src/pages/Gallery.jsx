@@ -1,26 +1,24 @@
-import React from "react";
-import project1 from "../assets/project1.jpg";
-import project2 from "../assets/project2.jpg";
-import project3 from "../assets/project3.jpg";
-import project4 from "../assets/project4.jpg";
-import park2 from "../assets/park2.jpg";
-import v1 from "../assets/v1.mp4";
-import v2 from "../assets/v2.mp4";
-import v3 from "../assets/v1.mp4";
-import v4 from "../assets/v2.mp4";
-import v5 from "../assets/v5.mp4";
-import v6 from "../assets/v6.mp4";
-const Gallery = () => {
-  const images = [project1, project2, project3, project4, park2];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-  const videos = [
-    v1,
-    v2,
-    v3,
-    v4,
-    v5,
-    v6,
-  ];
+const Gallery = () => {
+  const [files, setFiles] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/gallery")
+      .then((res) => setFiles(res.data)) // store full objects, not just URLs
+      .catch(() => setFiles([]));
+  }, []);
+
+  // Separate into images & videos based on file extension
+  const images = files.filter((file) =>
+    file.url.match(/\.(jpg|jpeg|png|gif)$/i)
+  );
+
+  const videos = files.filter((file) =>
+    file.url.match(/\.(mp4|webm|ogg)$/i)
+  );
 
   return (
     <section className="min-h-screen bg-white text-blue-900 px-6 py-12">
@@ -36,13 +34,20 @@ const Gallery = () => {
       <div>
         <h2 className="text-2xl font-semibold mb-4">Images</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {images.map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt={`Gallery ${i + 1}`}
-              className="rounded shadow hover:scale-105 transition-transform duration-300 object-cover w-full h-64"
-            />
+          {images.map((item, i) => (
+            <div key={i} className="border border-b-blue-900 rounded shadow-2xl p-2">
+              <img
+                src={`http://localhost:5000${item.url}`}
+                alt={`Gallery ${i + 1}`}
+                className="rounded shadow hover:scale-105 transition-transform duration-300 object-cover w-full h-64"
+              />
+              <p className="mt-2 text-sm text-gray-700">
+                 {item.client}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>📍</strong> {item.location}
+              </p>
+            </div>
           ))}
         </div>
       </div>
@@ -51,16 +56,19 @@ const Gallery = () => {
       <div className="mt-12">
         <h2 className="text-2xl font-semibold mb-4">Videos</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {videos.map((url, i) => (
-            <div key={i} className="aspect-video">
-              <iframe
+          {videos.map((item, i) => (
+            <div key={i} className="aspect-video border rounded shadow p-2">
+              <video
+                src={`http://localhost:5000${item.url}`}
+                controls
                 className="w-full h-full rounded shadow"
-                src={url}
-                title={`Video ${i + 1}`}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+              />
+              <p className="mt-2 text-sm text-gray-700">
+                 {item.client}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>📍</strong> {item.location}
+              </p>
             </div>
           ))}
         </div>
