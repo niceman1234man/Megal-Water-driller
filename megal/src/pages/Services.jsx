@@ -1,60 +1,22 @@
 import React ,{useState,useEffect} from "react";
-
-import axios from "axios"
+import axiosInstance from "../axiosInstance";
 const Services = () => {
   const [assets, setAssets] = useState([]);
    const [equipments, setEquipments] = useState([])
    const [services, setServices] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:5000/api/services").then((res)=> setServices(res.data));
- axios.get("http://localhost:5000/api/assets").then((res) => setAssets(res.data));
-  axios.get("http://localhost:5000/api/equipments")
+    axiosInstance.get("/api/services").then((res)=> setServices(res.data));
+ axiosInstance.get("/api/assets").then((res) => setAssets(res.data));
+  axiosInstance.get("/api/equipments")
       .then((res) => setEquipments(res.data));
     }, []);
-  const services2 = [
-    {
-      id: 1,
-      title: "Deep Water Well Drilling",
-      description: "Reliable deep borehole drilling using modern rotary and DTH equipment.",
-      icon: "💧",
-    },
-    {
-      id: 2,
-      title: "Pump Installation",
-      description: "Installation of electric and manual pumps for residential, agricultural, and industrial use.",
-      icon: "🔩",
-    },
-    {
-      id: 3,
-      title: "Hydrogeological Survey",
-      description: "Site investigation and groundwater assessment by licensed hydrogeologists.",
-      icon: "🌍",
-    },
-    {
-      id: 4,
-      title: "Test Pumping & Yield Analysis",
-      description: "We perform step-drawdown and constant rate tests to measure water yield.",
-      icon: "📈",
-    },
-    {
-      id: 5,
-      title: "Borehole Maintenance",
-      description: "Rehabilitation, deepening, or cleaning of existing water wells.",
-      icon: "🛠️",
-    },
-    {
-      id: 6,
-      title: "Water System Design",
-      description: "Turn-key design and planning for complete water supply systems.",
-      icon: "🧩",
-    },
-  ];
+  
 
   return (
     <section className="bg-white text-white py-0">
       <div className="">
         {/* Hero Header */}
-        <section className="h-screen bg-blue-800 text-white flex items-center justify-center px-4">
+        <section className="h-screen bg-blue-500 text-white flex items-center justify-center px-4">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-white mb-4">Our Services</h1>
             <p className="text-white max-w-2xl mx-auto text-lg">
@@ -81,7 +43,7 @@ const Services = () => {
                 services.map((service) => (
                   <div
                     key={service.id}
-                    className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600">
+                    className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600 ">
                     <div className="text-4xl mb-4 text-blue-700" >{service.icon}</div>
                     <h3 className="text-xl font-semibold mb-2 text-blue-800">{service.title}</h3>
                     <p className="text-gray-700">{service.description}</p>
@@ -103,11 +65,11 @@ const Services = () => {
                     <p className="text-gray-500">No assets available</p>
                   ) : (
                     assets.map((asset) => (
-                      <div key={asset._id} className="border p-4 rounded-lg shadow hover:shadow-lg transition">
+                      <div key={asset._id} className="border border-blue-600 p-4 rounded-lg shadow hover:shadow-lg transition">
                         <h3 className="text-xl font-semibold mb-2">{asset.name}</h3>
                         {asset.image && (
                           <img
-                            src={`http://localhost:5000${asset.image}`}
+                            src={`${axiosInstance.defaults.baseURL}${asset.image}`}
                             alt={asset.name}
                             className="w-full h-48 object-cover rounded mb-2"
                           />

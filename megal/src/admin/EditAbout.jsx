@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import axiosInstance from "../axiosInstance";
 export default function EditAbout() {
   const [about, setAbout] = useState({
     overview: "",
@@ -16,7 +16,7 @@ export default function EditAbout() {
 
   // Load current about info
   useEffect(() => {
-    axios.get("/api/about")
+    axiosInstance.get("/api/about")
       .then((res) => setAbout(res.data))
       .catch(() => alert("Failed to load About content"))
       .finally(() => setLoading(false));
@@ -33,7 +33,7 @@ export default function EditAbout() {
     formData.append("file", pdfFile);
 
     try {
-      const res = await axios.post("/api/upload", formData, {
+      const res = await axiosInstance.post("/api/about", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -54,7 +54,7 @@ export default function EditAbout() {
     }
 
     try {
-      await axios.put(
+      await axiosInstance.put(
         "/api/about",
         { ...about, licenseUrl: uploadedUrl },
         {

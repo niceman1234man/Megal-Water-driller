@@ -6,6 +6,7 @@ import { contactInfo } from "../components/mock/mock";
 import heroImage from "../assets/home.jpg";
 import park from "../assets/park.jpg";
 import { Link } from "react-router-dom";
+import axiosInstance from "../axiosInstance";
 
 export default function Home() {
   const [services, setServices] = useState([]);
@@ -13,10 +14,10 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState([]);
   const [contact, setContact] = useState({});
 useEffect(() => {
-  axios.get("http://localhost:5000/api/services") // updated URL
+  axiosInstance.get("/api/services") // updated URL
     .then((res) => setServices(res.data));
-    axios.get("http://localhost:5000/api/contact").then((res) => setContact(res.data)).catch(() => setContact({}));
-  axios.get("http://localhost:5000/api/projects")
+    axiosInstance.get("/api/contact").then((res) => setContact(res.data)).catch(() => setContact({}));
+  axiosInstance.get("/api/projects")
     .then((res) => setProjects(res.data.slice(0, 3)))
     .catch(() => setProjects([]));
 }, []);
@@ -103,7 +104,7 @@ useEffect(() => {
             {services.map((service) => (
               <div
                 key={service.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600"
+                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-l-2 border-blue-600"
               >
                 <div className="text-4xl mb-4">{service.icon}</div>
                 <h3 className="text-xl font-semibold text-blue-700 mb-2">
@@ -124,10 +125,10 @@ useEffect(() => {
             {projects.map((project) => (
               <div
                 key={project.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600 overflow-hidden"
+                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-r-2 border-blue-600 overflow-hidden"
               >
                 <img
-                  src={`http://localhost:5000${project.image}`}
+                  src={`${axiosInstance.defaults.baseURL}${project.image}`}
                   alt={project.title}
                   className="w-full h-48 object-cover"
                 />

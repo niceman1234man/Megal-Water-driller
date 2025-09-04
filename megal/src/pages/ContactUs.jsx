@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-
+import React, { useState ,useEffect} from "react";
+import axios from "axios";
+import axiosInstance from "../axiosInstance";
 const ContactUs = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -7,6 +8,10 @@ const ContactUs = () => {
     subject: "",
     message: "",
   });
+ const [contact, setContact] = useState({});
+ useEffect(() => {
+   axiosInstance.get("/api/contact").then((res) => setContact(res.data)).catch(() => setContact({}));
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,22 +20,32 @@ const ContactUs = () => {
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
+  
+
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-blue-50 to-white text-blue-900">
+    <section className="py-20 px-6  from-blue-50 to-white text-blue-900">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-start">
         <div>
-          <h2 className="text-4xl font-bold mb-6 text-blue-800">Contact Us</h2>
+          <h2 className="text-3xl font-semi-bold mb-6 text-blue-800 text-center">Contact Us</h2>
           <p className="text-lg text-gray-700 mb-6">
             We'd love to hear from you. Whether you have a question about services,
             projects, or anything else — our team is ready to help.
           </p>
-          <ul className="space-y-4 text-gray-800 text-base">
-            <li>📍 <strong>Address:</strong> Dirar Mall, Office 825/403, Yeka Subcity, Addis Ababa</li>
-            <li>📞 <strong>Phone:</strong> +251-907171710 / +251-934227962</li>
-            <li>📧 <strong>Email:</strong> muauzamare79@gmail.com</li>
-            <li>🌐 <strong>Website:</strong> www.megaldrilling.com</li>
-          </ul>
-
+             <div className=" bg-blue-600 bg-opacity-90 text-white text-xs md:text-sm px-4 py-6  space-y-2 rounded">
+          {
+            contact && contact.phones && contact.phones.length > 0 && (
+              <p>📞 {contact.phones.join(" / ")}</p>
+          )}
+          
+          {contact && contact.emails && contact.emails.length > 0 && (
+            <p>📧 {contact.emails.join(" / ")}</p>
+          )}
+     
+          {contact && contact.address && (
+            <p>🏠 {contact.address}</p>
+          )}
+         
+        </div>
           <iframe
             src="https://maps.google.com/maps?q=addis%20ababa&t=&z=13&ie=UTF8&iwloc=&output=embed"
             className="mt-8 w-full h-64 rounded-lg border shadow-md"
@@ -43,8 +58,9 @@ const ContactUs = () => {
         {/* Right: Contact Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl shadow-lg p-8 space-y-6 border border-blue-100"
+          className="bg-white rounded-xl shadow-lg p-8 space-y-6 border-t-5 border-r-3 border-blue-600"
         >
+          <h3 className="text-center  text-blue-600 text-2xl font-semibold">Get In Touch Us</h3>
           <div>
             <label className="block text-sm font-medium mb-1">Name</label>
             <input
@@ -101,6 +117,7 @@ const ContactUs = () => {
           </button>
         </form>
       </div>
+    
     </section>
   );
 };

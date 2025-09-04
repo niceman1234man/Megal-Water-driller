@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { FiEdit, FiTrash2 } from "react-icons/fi";
+import axiosInstance from "../axiosInstance";
 export default function GalleryAdmin() {
   const [mediaList, setMediaList] = useState([]);
   const [form, setForm] = useState({ location: "", client: "" });
@@ -9,7 +10,10 @@ export default function GalleryAdmin() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/gallery").then((res) => setMediaList(res.data));
+    axiosInstance
+      .get("/api/gallery")
+      .then((res) => setMediaList(res.data))
+      .catch(() => alert("Failed to fetch gallery."));
   }, []);
 
   const resetForm = () => {
@@ -18,7 +22,17 @@ export default function GalleryAdmin() {
     setEditingId(null);
   };
 
+  const validateForm = () => {
+    if (!form.location.trim()) return "Location is required.";
+    if (!form.client.trim()) return "Client is required.";
+    if (!editingId && !file) return "Please upload a file.";
+    return null;
+  };
+
   const addOrUpdateMedia = async () => {
+    const error = validateForm();
+    if (error) return alert(error);
+
     const data = new FormData();
     data.append("location", form.location);
     data.append("client", form.client);
@@ -33,10 +47,16 @@ export default function GalleryAdmin() {
       };
 
       if (editingId) {
-        const res = await axios.put(`http://localhost:5000/api/gallery/${editingId}`, data, config);
-        setMediaList(mediaList.map((m) => (m._id === editingId ? res.data : m)));
+        const res = await axiosInstance.put(
+          `/api/gallery/${editingId}`,
+          data,
+          config
+        );
+        setMediaList(
+          mediaList.map((m) => (m._id === editingId ? res.data : m))
+        );
       } else {
-        const res = await axios.post("http://localhost:5000/api/gallery", data, config);
+        const res = await axiosInstance.post("/api/gallery", data, config);
         setMediaList([res.data, ...mediaList]);
       }
       resetForm();
@@ -48,7 +68,7 @@ export default function GalleryAdmin() {
   const deleteMedia = async (id) => {
     if (!window.confirm("Delete this item?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/gallery/${id}`, {
+      await axiosInstance.delete(`/api/gallery/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMediaList(mediaList.filter((m) => m._id !== id));
@@ -61,6 +81,7 @@ export default function GalleryAdmin() {
     setForm({ location: item.location, client: item.client });
     setEditingId(item._id);
     setFile(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -74,14 +95,14 @@ export default function GalleryAdmin() {
         <div className="grid gap-3 mb-6">
           <input
             type="text"
-            placeholder="Location"
+            placeholder="Location *"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
             className="border p-2 rounded w-full"
           />
           <input
             type="text"
-            placeholder="Client Company"
+            placeholder="Client Company *"
             value={form.client}
             onChange={(e) => setForm({ ...form, client: e.target.value })}
             className="border p-2 rounded w-full"
@@ -115,9 +136,17 @@ export default function GalleryAdmin() {
           {mediaList.map((item) => (
             <div key={item._id} className="border p-3 rounded shadow">
               {item.url.endsWith(".mp4") ? (
-                <video src={`http://localhost:5000${item.url}`} controls className="w-full h-48 object-cover rounded" />
+                <video
+                  src={`${axiosInstance.defaults.baseURL}${item.url}`}
+                  controls
+                  className="w-full h-48 object-cover rounded"
+                />
               ) : (
-                <img src={`http://localhost:5000${item.url}`} alt="media" className="w-full h-48 object-cover rounded" />
+                <img
+                  src={`${axiosInstance.defaults.baseURL}${item.url}`}
+                  alt="media"
+                  className="w-full h-48 object-cover rounded"
+                />
               )}
               <div className="mt-2">
                 <p className="text-sm text-gray-700">
@@ -130,15 +159,18 @@ export default function GalleryAdmin() {
               <div className="flex justify-between mt-2">
                 <button
                   onClick={() => editMedia(item)}
-                  className="text-blue-600 text-sm hover:underline"
+                  className="text-green-600 hover:text-green-800"
+                  aria-label="Edit"
                 >
-                  Edit
+                  <FiEdit size={18} />
                 </button>
+
                 <button
                   onClick={() => deleteMedia(item._id)}
-                  className="text-red-600 text-sm hover:underline"
+                  className="text-red-600 hover:text-red-800"
+                  aria-label="Delete"
                 >
-                  Delete
+                  <FiTrash2 size={18} />
                 </button>
               </div>
             </div>

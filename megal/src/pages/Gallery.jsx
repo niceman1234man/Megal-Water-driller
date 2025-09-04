@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
 const Gallery = () => {
   const [files, setFiles] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/gallery")
-      .then((res) => setFiles(res.data)) // store full objects, not just URLs
+    axiosInstance
+      .get("/api/gallery")
+      .then((res) => setFiles(res.data)) 
       .catch(() => setFiles([]));
   }, []);
 
@@ -37,7 +38,7 @@ const Gallery = () => {
           {images.map((item, i) => (
             <div key={i} className="border border-b-blue-900 rounded shadow-2xl p-2">
               <img
-                src={`http://localhost:5000${item.url}`}
+                src={`${axiosInstance.defaults.baseURL}${item.url}`}
                 alt={`Gallery ${i + 1}`}
                 className="rounded shadow hover:scale-105 transition-transform duration-300 object-cover w-full h-64"
               />
@@ -59,7 +60,7 @@ const Gallery = () => {
           {videos.map((item, i) => (
             <div key={i} className="aspect-video border rounded shadow p-2">
               <video
-                src={`http://localhost:5000${item.url}`}
+                src={`${axiosInstance.defaults.baseURL}${item.url}`}
                 controls
                 className="w-full h-full rounded shadow"
               />

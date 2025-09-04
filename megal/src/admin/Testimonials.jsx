@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
+import axiosInstance from "../axiosInstance";
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [form, setForm] = useState({ name: "", comment: "", company: "" });
@@ -14,7 +13,7 @@ export default function Testimonials() {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get("/api/testimonials");
+      const res = await axiosInstance.get("/api/testimonials");
       setTestimonials(res.data);
     } catch {
       alert("Failed to fetch testimonials.");
@@ -22,30 +21,38 @@ export default function Testimonials() {
   };
 
   const addOrUpdateTestimonial = async () => {
-    if (!form.name || !form.comment) return alert("Name and comment are required.");
+    if (!form.name || !form.comment)
+      return alert("Name and comment are required.");
 
     const data = new FormData();
     data.append("name", form.name);
     data.append("comment", form.comment);
     data.append("company", form.company);
-    if (file) data.append("image", file);
+    if (file) data.append("file", file); // file can be image or pdf
 
     try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       if (editingId) {
-        const res = await axios.put(`/api/testimonials/${editingId}`, data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setTestimonials(testimonials.map(t => (t._id === editingId ? res.data : t)));
+        const res = await axiosInstance.put(
+          `/api/testimonials/${editingId}`,
+          data,
+          config
+        );
+        setTestimonials(
+          testimonials.map((t) => (t._id === editingId ? res.data : t))
+        );
       } else {
-        const res = await axios.post("/api/testimonials", data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axiosInstance.post(
+          "/api/testimonials",
+          data,
+          config
+        );
         setTestimonials([res.data, ...testimonials]);
       }
       resetForm();
@@ -57,10 +64,10 @@ export default function Testimonials() {
   const deleteTestimonial = async (id) => {
     if (!window.confirm("Delete this testimonial?")) return;
     try {
-      await axios.delete(`/api/testimonials/${id}`, {
+      await axiosInstance.delete(`/api/testimonials/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setTestimonials(testimonials.filter(t => t._id !== id));
+      setTestimonials(testimonials.filter((t) => t._id !== id));
     } catch {
       alert("Failed to delete.");
     }
@@ -74,6 +81,7 @@ export default function Testimonials() {
     });
     setEditingId(testimonial._id);
     setFile(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
@@ -81,6 +89,8 @@ export default function Testimonials() {
     setFile(null);
     setEditingId(null);
   };
+
+  const isPDF = (filename) => filename?.toLowerCase().endsWith(".pdf");
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -95,26 +105,26 @@ export default function Testimonials() {
             type="text"
             placeholder="Client Name"
             value={form.name}
-            onChange={e => setForm({ ...form, name: e.target.value })}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
             className="border p-2 rounded w-full"
           />
           <input
             type="text"
             placeholder="Company (optional)"
             value={form.company}
-            onChange={e => setForm({ ...form, company: e.target.value })}
+            onChange={(e) => setForm({ ...form, company: e.target.value })}
             className="border p-2 rounded w-full"
           />
           <textarea
             placeholder="Comment"
             value={form.comment}
-            onChange={e => setForm({ ...form, comment: e.target.value })}
+            onChange={(e) => setForm({ ...form, comment: e.target.value })}
             className="border p-2 rounded w-full"
           />
           <input
             type="file"
-            accept="image/*"
-            onChange={e => setFile(e.target.files[0])}
+            accept="image/*,.pdf"
+            onChange={(e) => setFile(e.target.files[0])}
             className="border p-2 rounded"
           />
           <div className="flex gap-2">
@@ -137,7 +147,7 @@ export default function Testimonials() {
 
         {/* Testimonials List */}
         {testimonials.length > 0 ? (
-          testimonials.map(t => (
+          testimonials.map((t) => (
             <div
               key={t._id}
               className="border-b py-4 flex justify-between items-start gap-4"
@@ -147,13 +157,27 @@ export default function Testimonials() {
                 <p className="text-sm text-gray-600 italic">{t.company}</p>
                 <p className="text-gray-700 mt-1">{t.comment}</p>
               </div>
+
+              {/* File display (image or PDF link) */}
               {t.image && (
-                <img
-                  src={t.image}
-                  alt="client"
-                  className="w-20 h-20 object-cover rounded-full"
-                />
+                isPDF(t.image) ? (
+                  <a
+                    href={`${axiosInstance}${t.image}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red-600 underline text-sm"
+                  >
+                    View PDF
+                  </a>
+                ) : (
+                  <img
+                    src={`${axiosInstance}${t.image}`}
+                    alt="client"
+                    className="w-20 h-20 object-cover rounded-full"
+                  />
+                )
               )}
+
               <div className="flex flex-col gap-2">
                 <button
                   onClick={() => editTestimonial(t)}
