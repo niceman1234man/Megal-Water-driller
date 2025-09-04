@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Testimonial = require("../models/Testimonial");
-const auth = require("../middleware/auth");
+
 const multer = require("multer");
 const path = require("path");
 
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 // ADD testimonial
-router.post("/", auth, upload.single("image"), async (req, res) => {
+router.post("/", upload.single("file"), async (req, res) => {
   const newTestimonial = new Testimonial({
     ...req.body,
     image: req.file ? `/uploads/${req.file.filename}` : "",
@@ -29,7 +29,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
 });
 
 // DELETE testimonial
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   await Testimonial.findByIdAndDelete(req.params.id);
   res.sendStatus(204);
 });

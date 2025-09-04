@@ -8,12 +8,12 @@ const EquipmentSchema = new mongoose.Schema({
   },
   brand: {
     type: String,
-    required: true, // e.g. "Dell", "HP", "Canon"
+   
     trim: true
   },
   model: {
     type: String,
-    required: true, // e.g. "Latitude 5400"
+  
     trim: true
   },
   year: {

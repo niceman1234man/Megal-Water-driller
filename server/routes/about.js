@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const About = require("../models/About");
-const auth = require("../middleware/auth");
+
 const multer = require("multer");
 const path = require("path");
 
@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // GET full about content
-router.get("/", async (req, res) => {
+router.get("/about", async (req, res) => {
   const about = await About.findOne();
   res.json(about || {
     overview: "",
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 });
 
 // UPDATE about fields (without file upload)
-router.put("/", auth, async (req, res) => {
+router.put("/about",  async (req, res) => {
   const { overview, mission, vision, goals } = req.body;
   const updated = await About.findOneAndUpdate(
     {},
@@ -36,7 +36,7 @@ router.put("/", auth, async (req, res) => {
 });
 
 // POST upload license PDF
-router.post("/licenses", auth, upload.single("file"), async (req, res) => {
+router.post("/about",  upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
   const fileData = {
@@ -53,7 +53,7 @@ router.post("/licenses", auth, upload.single("file"), async (req, res) => {
 });
 
 // DELETE a license PDF by index
-router.delete("/licenses/:index", auth, async (req, res) => {
+router.delete("/licenses/:index",  async (req, res) => {
   const { index } = req.params;
   const about = await About.findOne();
   if (!about || !about.licenses[index]) return res.status(404).json({ error: "License not found" });
