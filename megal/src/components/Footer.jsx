@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import {
   FaFacebook,
   FaTwitter,
@@ -28,12 +28,12 @@ export default function Footer() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/contact")
+    axiosInstance
+      .get("/api/contact")
       .then((res) => setContact(res.data))
       .catch(() => setContact({}));
-    axios
-      .get("http://localhost:5000/api/socialmedia")
+    axiosInstance
+      .get("/api/socialmedia")
       .then((res) => setSocialLinks(res.data))
       .catch(() => setSocialLinks([]));
   }, []);
