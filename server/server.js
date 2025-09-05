@@ -14,26 +14,19 @@ const socialMediaRoutes = require("./routes/socialMedia");
 const testimonalRoutes = require("./routes/testimonials");
 const dotenv = require("dotenv");
 dotenv.config();
-// mongoose.connect("mongodb://127.0.0.1:27017/megalDB", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// })
-// .then(() => console.log("✅ Connected to MongoDB locally"))
-// .catch((err) => console.error("❌ MongoDB connection error:", err));
+const MONGO_URI = process.env.MONGO_URI;
 
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => console.log("✅ Connected to MongoDB online"))
 .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust this to your frontend URL
+  origin: 'http://localhost:5173', 
   methods: [ 'GET', 'POST', 'PUT', 'DELETE'],
-  // credentials: true // Allow credentials if needed
+
 }));
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
@@ -44,9 +37,6 @@ app.use('/api',galleryRoutes);
 app.use('/api',aboutRoutes);
 app.use("/api/socialmedia", socialMediaRoutes);
 app.use("/api/testimonials", testimonalRoutes);
-
-
-
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
