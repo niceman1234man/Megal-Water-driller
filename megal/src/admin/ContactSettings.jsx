@@ -138,7 +138,7 @@ const validateSocial = () => {
     e.preventDefault();
     if (!validateContact()) return;
 
-    const formattedPhones = info.phones.map((p) => formatEthiopianPhone(p));
+    const formattedPhones = info.phones.map((p) => autoFormatEthiopianPhone(p));
 
     try {
       await axiosInstance.put(
