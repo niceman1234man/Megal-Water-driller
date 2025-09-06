@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+ import { toast } from 'react-toastify';
 export default function Services() {
   const [services, setServices] = useState([]);
   const [form, setForm] = useState({ title: "", description: "" });
@@ -104,7 +105,7 @@ export default function Services() {
       setForm({ title: "", description: "" });
       setServiceErrors({});
     } catch {
-      alert("Failed to save service");
+      toast.error("Failed to save service");
     }
   };
 
@@ -116,7 +117,7 @@ export default function Services() {
       });
       setServices(services.filter((s) => s._id !== id));
     } catch {
-      alert("Failed to delete");
+      toast.error("Failed to delete");
     }
   };
 
@@ -168,7 +169,7 @@ export default function Services() {
       });
       setEquipmentErrors({});
     } catch {
-      alert("Failed to save equipment");
+      toast.error("Failed to save equipment");
     }
   };
 
@@ -185,7 +186,7 @@ export default function Services() {
       });
       setEquipments(equipments.filter((eq) => eq._id !== id));
     } catch {
-      alert("Failed to delete equipment");
+      toast.error("Failed to delete equipment");
     }
   };
 
@@ -224,7 +225,7 @@ export default function Services() {
       setAssetForm({ name: "", image: null });
       setAssetErrors({});
     } catch {
-      alert("Failed to save asset");
+      toast.error("Failed to save asset");
     }
   };
 
@@ -236,7 +237,7 @@ export default function Services() {
       });
       setAssets(assets.filter((a) => a._id !== id));
     } catch {
-      alert("Failed to delete asset");
+      toast.error("Failed to delete asset");
     }
   };
 

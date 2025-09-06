@@ -17,6 +17,8 @@ import ContactUs from './pages/ContactUs.jsx'
 import Project from './pages/Project.jsx'
 import GalleryAdmin from './admin/Gallery.jsx'
 import Testimonialss from './admin/Testimonials.jsx'
+ import { ToastContainer, toast } from 'react-toastify';
+  
 function App() {
   return (
     <>
@@ -42,6 +44,7 @@ function App() {
 
       
       </div>
+        <ToastContainer />
       <Footer/>
     </>
   )

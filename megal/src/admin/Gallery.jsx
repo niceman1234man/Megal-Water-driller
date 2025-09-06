@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+ import { toast } from 'react-toastify';
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import axiosInstance from "../axiosInstance";
 export default function GalleryAdmin() {
@@ -13,7 +13,7 @@ export default function GalleryAdmin() {
     axiosInstance
       .get("/api/gallery")
       .then((res) => setMediaList(res.data))
-      .catch(() => alert("Failed to fetch gallery."));
+      .catch(() => toast.error("Failed to fetch gallery."));
   }, []);
 
   const resetForm = () => {
@@ -61,7 +61,7 @@ export default function GalleryAdmin() {
       }
       resetForm();
     } catch {
-      alert("Failed to save media.");
+      toast.error("Failed to save media.");
     }
   };
 
@@ -73,7 +73,7 @@ export default function GalleryAdmin() {
       });
       setMediaList(mediaList.filter((m) => m._id !== id));
     } catch {
-      alert("Failed to delete.");
+      toast.error("Failed to delete.");
     }
   };
 

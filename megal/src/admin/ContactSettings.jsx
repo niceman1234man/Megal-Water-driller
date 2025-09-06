@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import axiosInstance from "../axiosInstance";
+ import { toast } from 'react-toastify';
 import {
   FaFacebook,
   FaInstagram,
@@ -146,9 +147,9 @@ const validateSocial = () => {
         { ...info, phones: formattedPhones },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Contact info updated!");
+      toast.success("Contact info updated!");
     } catch {
-      alert("Failed to save contact info.");
+      toast.error("Failed to save contact info.");
     }
   };
 
@@ -176,7 +177,7 @@ const validateSocial = () => {
     setPlatform("");
     setLink("");
   } catch {
-    alert("Failed to save social media link.");
+    toast.error("Failed to save social media link.");
   }
 };
 
@@ -202,7 +203,7 @@ const validateSocial = () => {
     setLink("");
     setEditingId(null);
   } catch {
-    alert("Failed to update social media link.");
+    toast.error("Failed to update social media link.");
   }
 };
 
@@ -214,7 +215,7 @@ const validateSocial = () => {
       });
       setSocialLinks(socialLinks.filter((item) => item._id !== id));
     } catch {
-      alert("Failed to delete.");
+      toast.error("Failed to delete.");
     }
   };
 

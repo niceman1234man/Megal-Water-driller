@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+ import { toast } from 'react-toastify';
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import axiosInstance from "../axiosInstance";
 export default function Projects() {
@@ -33,7 +33,7 @@ export default function Projects() {
       const res = await axiosInstance.get("/api/projects");
       setProjects(res.data);
     } catch {
-      alert("Failed to fetch projects.");
+      toast.error("Failed to fetch projects.");
     }
   };
 
@@ -87,7 +87,7 @@ export default function Projects() {
       }
       resetForm();
     } catch {
-      alert("Failed to save project.");
+      toast.error("Failed to save project.");
     }
   };
 
@@ -99,7 +99,7 @@ export default function Projects() {
       });
       setProjects(projects.filter((p) => p._id !== id));
     } catch {
-      alert("Failed to delete project.");
+      toast.error("Failed to delete project.");
     }
   };
 

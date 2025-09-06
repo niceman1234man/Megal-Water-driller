@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+ import { toast } from 'react-toastify';
 import axiosInstance from "../axiosInstance";
+
 export default function EditAbout() {
   const [about, setAbout] = useState({
     overview: "",
@@ -18,7 +19,7 @@ export default function EditAbout() {
   useEffect(() => {
     axiosInstance.get("/api/about")
       .then((res) => setAbout(res.data))
-      .catch(() => alert("Failed to load About content"))
+      .catch(() => toast.error("Failed to load About content"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -41,7 +42,7 @@ export default function EditAbout() {
       });
       return res.data.url; // assuming server returns { url: "..." }
     } catch {
-      alert("Failed to upload license PDF");
+      toast.error("Failed to upload license PDF");
       return null;
     }
   };
@@ -61,9 +62,9 @@ export default function EditAbout() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("About section updated successfully!");
+      toast.success("About section updated successfully!");
     } catch {
-      alert("Failed to update.");
+      toast.error("Failed to update.");
     }
   };
 

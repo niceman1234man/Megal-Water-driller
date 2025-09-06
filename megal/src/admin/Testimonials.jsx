@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
+ import { toast } from 'react-toastify';
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [form, setForm] = useState({ name: "", comment: "", company: "" });
@@ -16,7 +17,7 @@ export default function Testimonials() {
       const res = await axiosInstance.get("/api/testimonials");
       setTestimonials(res.data);
     } catch {
-      alert("Failed to fetch testimonials.");
+      toast.error("Failed to fetch testimonials.");
     }
   };
 
@@ -57,7 +58,7 @@ export default function Testimonials() {
       }
       resetForm();
     } catch {
-      alert("Failed to save testimonial.");
+      toast.error("Failed to save testimonial.");
     }
   };
 
@@ -69,7 +70,7 @@ export default function Testimonials() {
       });
       setTestimonials(testimonials.filter((t) => t._id !== id));
     } catch {
-      alert("Failed to delete.");
+      toast.error("Failed to delete.");
     }
   };
 
