@@ -1,20 +1,8 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const Gallery= require("../models/GallaryImage");
+const Gallery = require("../models/GallaryImage");
+const { upload } = require("../config/cloudinary"); // import from cloudinary.js
 
 const router = express.Router();
-
-// Storage config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // uploads folder at project root
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
 
 // Get all media
 router.get("/gallery", async (req, res) => {
@@ -26,7 +14,7 @@ router.get("/gallery", async (req, res) => {
   }
 });
 
-// Create media
+// Create media (Upload to Cloudinary)
 router.post("/gallery", upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
@@ -35,7 +23,7 @@ router.post("/gallery", upload.single("file"), async (req, res) => {
     const newMedia = new Gallery({
       location,
       client,
-      url: `/uploads/${req.file.filename}`,
+      url: req.file.path, // Cloudinary auto provides the URL here
     });
 
     await newMedia.save();
@@ -45,14 +33,14 @@ router.post("/gallery", upload.single("file"), async (req, res) => {
   }
 });
 
-// Update media
+// Update media (also upload to Cloudinary if new file)
 router.put("/gallery/:id", upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
     const updateData = { location, client };
 
     if (req.file) {
-      updateData.url = `/uploads/${req.file.filename}`;
+      updateData.url = req.file.path; // Cloudinary URL
     }
 
     const updated = await Gallery.findByIdAndUpdate(req.params.id, updateData, {
