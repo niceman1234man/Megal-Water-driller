@@ -38,7 +38,7 @@ const Gallery = () => {
           {images.map((item, i) => (
             <div key={i} className="border border-b-blue-900 rounded shadow-2xl p-2">
               <img
-                src={`${axiosInstance.defaults.baseURL}${item.url}`}
+                src={`${item.url}`}
                 alt={`Gallery ${i + 1}`}
                 className="rounded shadow hover:scale-105 transition-transform duration-300 object-cover w-full h-64"
               />
@@ -60,7 +60,7 @@ const Gallery = () => {
           {videos.map((item, i) => (
             <div key={i} className="aspect-video border rounded shadow p-2">
               <video
-                src={`${axiosInstance.defaults.baseURL}${item.url}`}
+                src={`${item.url}`}
                 controls
                 className="w-full h-full rounded shadow"
               />

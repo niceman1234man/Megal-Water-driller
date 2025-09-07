@@ -309,7 +309,7 @@ export default function Projects() {
               </div>
               {project.image && (
                 <img
-                  src={`${axiosInstance.defaults.baseURL}${project.image}`}
+                  src={`${project.image}`}
                   alt="project"
                   className="w-24 h-24 object-cover rounded shadow"
                 />

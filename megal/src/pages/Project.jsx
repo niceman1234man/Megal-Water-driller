@@ -46,7 +46,7 @@ const Projects = () => {
                 className="bg-white border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-transform hover:-translate-y-1"
               >
                 <img
-                  src={`${axiosInstance.defaults.baseURL}${project.image}`}
+                  src={`${project.image}`}
                   alt={project.title}
                   className="h-48 w-full object-cover"
                 />

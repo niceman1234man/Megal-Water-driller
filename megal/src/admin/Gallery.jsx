@@ -137,13 +137,13 @@ export default function GalleryAdmin() {
             <div key={item._id} className="border p-3 rounded shadow">
               {item.url.endsWith(".mp4") ? (
                 <video
-                  src={`${axiosInstance.defaults.baseURL}${item.url}`}
+                  src={`${item.url}`}
                   controls
                   className="w-full h-48 object-cover rounded"
                 />
               ) : (
                 <img
-                  src={`${axiosInstance.defaults.baseURL}${item.url}`}
+                  src={`${item.url}`}
                   alt="media"
                   className="w-full h-48 object-cover rounded"
                 />
