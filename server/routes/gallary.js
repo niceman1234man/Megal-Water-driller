@@ -1,6 +1,6 @@
 const express = require("express");
 const Gallery = require("../models/GallaryImage");
-const { upload } = require("../config/cloudinary"); // import from cloudinary.js
+const { upload } = require("../config/cloudinary");
 
 const router = express.Router();
 
@@ -23,7 +23,8 @@ router.post("/gallery", upload.single("file"), async (req, res) => {
     const newMedia = new Gallery({
       location,
       client,
-      url: req.file.path, // Cloudinary auto provides the URL here
+      url: req.file.path, // ✅ multer-storage-cloudinary gives Cloudinary URL here
+      public_id: req.file.filename, // optional: keep Cloudinary public_id for deletion
     });
 
     await newMedia.save();
@@ -33,21 +34,20 @@ router.post("/gallery", upload.single("file"), async (req, res) => {
   }
 });
 
-// Update media (also upload to Cloudinary if new file)
+// Update media (Upload new file to Cloudinary if exists)
 router.put("/gallery/:id", upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
     const updateData = { location, client };
 
     if (req.file) {
-      updateData.url = req.file.path; // Cloudinary URL
+      updateData.url = req.file.path; // ✅ Cloudinary URL
+      updateData.public_id = req.file.filename; // store Cloudinary public_id
     }
 
-    const updated = await Gallery.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
-
+    const updated = await Gallery.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!updated) return res.status(404).json({ error: "Media not found" });
+
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
