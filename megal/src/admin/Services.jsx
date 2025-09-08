@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
  import { toast } from 'react-toastify';
+ 
 export default function Services() {
   const [services, setServices] = useState([]);
   const [form, setForm] = useState({ title: "", description: "" });
@@ -450,7 +451,7 @@ export default function Services() {
                 <p className="font-medium text-gray-800">{a.name}</p>
                 {a.image && (
                   <img
-                    src={`${axiosInstance.defaults.baseURL}${a.image}`}
+                    src={`${a.image}`}
                     alt={a.name}
                     className="w-24 h-24 object-cover rounded mt-1"
                   />
