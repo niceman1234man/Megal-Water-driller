@@ -1,6 +1,26 @@
 const express = require("express");
 const Gallery = require("../models/GallaryImage");
 const { upload } = require("../config/cloudinary");
+const { cloudinary } = require("../config/cloudinary");
+
+router.delete("/gallery/:id", async (req, res) => {
+  try {
+    const media = await Gallery.findById(req.params.id);
+    if (!media) return res.status(404).json({ error: "Media not found" });
+
+    // delete from Cloudinary if you stored public_id
+    if (media.public_id) {
+      await cloudinary.uploader.destroy(media.public_id, { resource_type: "auto" });
+    }
+
+    await Gallery.findByIdAndDelete(req.params.id);
+    res.sendStatus(204);
+  } catch (err) {
+    console.error("❌ Delete error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 const router = express.Router();
 
@@ -18,32 +38,50 @@ router.get("/gallery", async (req, res) => {
 router.post("/gallery", upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
-    if (!req.file) return res.status(400).json({ error: "File is required" });
+    if (!req.file) {
+      return res.status(400).json({ error: "File is required" });
+    }
 
     const newMedia = new Gallery({
       location,
       client,
-      url: req.file.path, // ✅ multer-storage-cloudinary gives Cloudinary URL here
-      public_id: req.file.filename, // optional: keep Cloudinary public_id for deletion
+      url: req.file.path,      // ✅ Cloudinary gives URL
+      public_id: req.file.filename, // ✅ Cloudinary public_id (for delete)
     });
 
     await newMedia.save();
     res.json(newMedia);
   } catch (err) {
+    console.error("❌ Create error:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
 
-// Update media (Upload new file to Cloudinary if exists)
+
+// Update media
 router.put("/gallery/:id", upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
-    const updateData = { location, client };
 
+    // find the existing item
+    const existing = await Gallery.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ error: "Media not found" });
+    }
+
+    // prepare update
+    const updateData = {
+      location: location || existing.location,
+      client: client || existing.client,
+      url: existing.url,
+      public_id: existing.public_id,
+    };
+
+    // if new file uploaded, replace with Cloudinary URL
     if (req.file) {
-      updateData.url = req.file.path;        // Cloudinary secure URL
-      updateData.public_id = req.file.filename; // Cloudinary public_id
+      updateData.url = req.file.path;       // ✅ Cloudinary URL
+      updateData.public_id = req.file.filename;
     }
 
     const updated = await Gallery.findByIdAndUpdate(
@@ -52,24 +90,33 @@ router.put("/gallery/:id", upload.single("file"), async (req, res) => {
       { new: true }
     );
 
-    if (!updated) return res.status(404).json({ error: "Media not found" });
-
     res.json(updated);
   } catch (err) {
-    console.error(err);
+    console.error("❌ Update error:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
 
-// Delete media
+
+
 router.delete("/gallery/:id", async (req, res) => {
   try {
+    const media = await Gallery.findById(req.params.id);
+    if (!media) return res.status(404).json({ error: "Media not found" });
+
+    // delete from Cloudinary if you stored public_id
+    if (media.public_id) {
+      await cloudinary.uploader.destroy(media.public_id, { resource_type: "auto" });
+    }
+
     await Gallery.findByIdAndDelete(req.params.id);
     res.sendStatus(204);
   } catch (err) {
+    console.error("❌ Delete error:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
