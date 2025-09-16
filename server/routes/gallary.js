@@ -34,6 +34,7 @@ router.post("/gallery", upload.single("file"), async (req, res) => {
   }
 });
 
+
 // Update media (Upload new file to Cloudinary if exists)
 router.put("/gallery/:id", upload.single("file"), async (req, res) => {
   try {
@@ -41,18 +42,25 @@ router.put("/gallery/:id", upload.single("file"), async (req, res) => {
     const updateData = { location, client };
 
     if (req.file) {
-      updateData.url = req.file.path; // ✅ Cloudinary URL
-      updateData.public_id = req.file.filename; // store Cloudinary public_id
+      updateData.url = req.file.path;        // Cloudinary secure URL
+      updateData.public_id = req.file.filename; // Cloudinary public_id
     }
 
-    const updated = await Gallery.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    const updated = await Gallery.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true }
+    );
+
     if (!updated) return res.status(404).json({ error: "Media not found" });
 
     res.json(updated);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Delete media
 router.delete("/gallery/:id", async (req, res) => {
