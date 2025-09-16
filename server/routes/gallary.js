@@ -18,19 +18,21 @@ router.get("/gallery", async (req, res) => {
   }
 });
 
-// Create media (Upload to Cloudinary)
 router.post("/gallery", upload.single("file"), async (req, res) => {
   try {
-    const { location, client } = req.body;
+    console.log("➡️ Body:", req.body);
+    console.log("➡️ File:", req.file);
+
     if (!req.file) {
       return res.status(400).json({ error: "File is required" });
     }
 
+    const { location, client } = req.body;
     const newMedia = new Gallery({
       location,
       client,
-      url: req.file.path,      // ✅ Cloudinary gives URL
-      public_id: req.file.filename, // ✅ Cloudinary public_id (for delete)
+      url: req.file.path,
+      public_id: req.file.filename,
     });
 
     await newMedia.save();
