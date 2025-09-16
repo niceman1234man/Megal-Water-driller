@@ -3,23 +3,7 @@ const Gallery = require("../models/GallaryImage");
 const { upload } = require("../config/cloudinary");
 const { cloudinary } = require("../config/cloudinary");
 
-router.delete("/gallery/:id", async (req, res) => {
-  try {
-    const media = await Gallery.findById(req.params.id);
-    if (!media) return res.status(404).json({ error: "Media not found" });
 
-    // delete from Cloudinary if you stored public_id
-    if (media.public_id) {
-      await cloudinary.uploader.destroy(media.public_id, { resource_type: "auto" });
-    }
-
-    await Gallery.findByIdAndDelete(req.params.id);
-    res.sendStatus(204);
-  } catch (err) {
-    console.error("❌ Delete error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
 
 
 const router = express.Router();
