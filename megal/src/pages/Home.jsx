@@ -120,10 +120,13 @@ export default function Home() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.isArray(services) && services.length > 0 ? (
               services.map((service) => (
-                <div key={service._id || service.id}  className="border rounded p-3 flex justify-between items-center shadow-sm">
-                  <h3>{service.title}</h3>
-                  <p>{service.description}</p>
-                </div>
+                 <div
+                    key={service.id}
+                    className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-blue-600 ">
+                    <div className="text-4xl mb-4 text-blue-700" >{service.icon}</div>
+                    <h3 className="text-xl font-semibold mb-2 text-blue-800">{service.title}</h3>
+                    <p className="text-gray-700">{service.description}</p>
+                  </div>
               ))
             ) : (
               <p className="text-gray-500 col-span-full text-center">
