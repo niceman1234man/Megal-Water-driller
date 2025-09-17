@@ -120,7 +120,7 @@ export default function Home() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.isArray(services) && services.length > 0 ? (
               services.map((service) => (
-                <div key={service._id || service.id}>
+                <div key={service._id || service.id}  className="border rounded p-3 flex justify-between items-center shadow-sm">
                   <h3>{service.title}</h3>
                   <p>{service.description}</p>
                 </div>
