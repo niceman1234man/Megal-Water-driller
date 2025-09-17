@@ -34,46 +34,51 @@ const Projects = () => {
 
       {/* Projects list */}
       <section className="max-w-7xl mx-auto py-10">
-        <div id="projectsList" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.length === 0 ? (
-            <p className="text-gray-500 col-span-full text-center py-10">
-              No projects available
-            </p>
-          ) : (
-            projects.map((project) => (
-              <div
-                key={project._id} // ✅ unique key
-                className="bg-white border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-transform hover:-translate-y-1"
-              >
-                <img
-                  src={`${project.image}`}
-                  alt={project.title}
-                  className="h-48 w-full object-cover"
-                />
-                 <div className="flex-1">
-                <h3 className="font-bold text-blue-700">{project.title}</h3>
-                <p className="text-sm text-gray-600">{project.description}</p>
-                <div className="text-sm text-gray-500 italic mt-1">
-                  <p>Client: {project.client}</p>
-                  <p>Location: {project.location}</p>
-                  <p>Budget: {project.budget} {project.unit}</p>
-                  <p>Contractor: {project.contractor}</p>
-                  <p>
-                    Status: {project.status} ({project.percentageOfCompletion}
-                    %)
-                  </p>
-                  <p>Acceptance: {project.acceptance}</p>
-                  <p>Role of Binder: {project.roleOfBinder}</p>
-                  <p>
-                    Start: {new Date(project.startDate).toDateString()} | End:{" "}
-                    {new Date(project.endDate).toDateString()}
-                  </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.isArray(projects) && projects.length > 0 ? (
+              projects.map((project) => (
+                <div
+                  key={project._id || project.id}
+                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-r-2 border-blue-600 overflow-hidden"
+                >
+                  <img
+                    src={`${project.image}`}
+                    alt={project.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-blue-700">{project.title}</h3>
+                    <p className="text-sm text-gray-600">
+                      {project.description}
+                    </p>
+                    <div className="text-sm text-gray-500 italic mt-1">
+                      <p>Client: {project.client}</p>
+                      <p>Location: {project.location}</p>
+                      <p>
+                        Budget: {project.budget} {project.unit}
+                      </p>
+                      <p>Contractor: {project.contractor}</p>
+                      <p>
+                        Status: {project.status} (
+                        {project.percentageOfCompletion}
+                        %)
+                      </p>
+                      <p>Acceptance: {project.acceptance}</p>
+                      <p>Role of Binder: {project.roleOfBinder}</p>
+                      <p>
+                        Start: {new Date(project.startDate).toDateString()} |
+                        End: {new Date(project.endDate).toDateString()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            ) : (
+              <p className="text-gray-500 col-span-full text-center">
+                No projects available
+              </p>
+            )}
+          </div>
       </section>
     </section>
   );
