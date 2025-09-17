@@ -86,14 +86,19 @@ router.put("/gallery/:id", upload.single("file"), async (req, res) => {
 
 
 
+// Delete media
 router.delete("/gallery/:id", async (req, res) => {
   try {
     const media = await Gallery.findById(req.params.id);
     if (!media) return res.status(404).json({ error: "Media not found" });
 
-    // delete from Cloudinary if you stored public_id
+    // Determine type based on file extension
+    let resourceType = "image";
+    if (media.url.endsWith(".mp4")) resourceType = "video";
+    if (media.url.endsWith(".pdf")) resourceType = "raw";
+
     if (media.public_id) {
-      await cloudinary.uploader.destroy(media.public_id, { resource_type: "auto" });
+      await cloudinary.uploader.destroy(media.public_id, { resource_type: resourceType });
     }
 
     await Gallery.findByIdAndDelete(req.params.id);
@@ -103,6 +108,7 @@ router.delete("/gallery/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 module.exports = router;
