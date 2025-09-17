@@ -69,7 +69,7 @@ const Services = () => {
                         <h3 className="text-xl font-semibold mb-2">{asset.name}</h3>
                         {asset.image && (
                           <img
-                            src={`${axiosInstance.defaults.baseURL}${asset.image}`}
+                            src={`${asset.image}`}
                             alt={asset.name}
                             className="w-full h-48 object-cover rounded mb-2"
                           />
