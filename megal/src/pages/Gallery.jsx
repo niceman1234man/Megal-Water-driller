@@ -35,7 +35,7 @@ const Gallery = () => {
       <div>
         <h2 className="text-2xl font-semibold mb-4">Images</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {images.map((item, i) => (
+          {images.length>0 ?( images.map((item, i) => (
             <div key={i} className="border border-b-blue-900 rounded shadow-2xl p-2">
               <img
                 src={`${item.url}`}
@@ -49,15 +49,15 @@ const Gallery = () => {
                 <strong>📍</strong> {item.location}
               </p>
             </div>
-          ))}
+          ))):( <p className="text-gray-500 col-span-full text-center">No images available</p>)}
         </div>
       </div>
 
       {/* Videos Section */}
       <div className="mt-12">
         <h2 className="text-2xl font-semibold mb-4">Videos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg-grid-cols-3 gap-6">
-          {videos.map((item, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 ">
+          {videos.length>0 ?( videos.map((item, i) => (
             <div key={i} className="aspect-video border rounded shadow p-2">
               <video
                 src={`${item.url}`}
@@ -71,7 +71,7 @@ const Gallery = () => {
                 <strong>📍</strong> {item.location}
               </p>
             </div>
-          ))}
+          ))):( <p className="text-gray-500 col-span-full text-center">No videos available</p>)}
         </div>
       </div>
     </section>
