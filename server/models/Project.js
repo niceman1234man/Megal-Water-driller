@@ -45,6 +45,7 @@ const ProjectSchema = new mongoose.Schema(
     },
     location: String,
     image: String,
+    public_id: String, // to store Cloudinary public_id for deletion
   },
   { timestamps: true }
 );
