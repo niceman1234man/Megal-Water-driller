@@ -16,6 +16,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "megal_water_driller", // your folder name in cloudinary
+    resource_type: "auto", 
     allowed_formats: ["jpg", "png", "jpeg", "mp4", "pdf"], // what you want to allow
   },
 });
