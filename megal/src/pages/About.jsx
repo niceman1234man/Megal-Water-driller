@@ -25,12 +25,7 @@ const AboutUs = () => {
         {/* Page Header */}
         <div className="bg-blue-700">
              <section className="relative h-screen w-full overflow-hidden bg-blue-700">
-          {/* Image */}
-          <img
-            src={heroImage} // place this image in public/assets/about.jpg
-            alt="Megal Water Drilling"
-            className="w-full h-full object-cover"
-          />
+          
 
           {/* Overlay Text */}
           <div className="absolute inset-0  bg-opacity-60 flex items-center justify-center">
