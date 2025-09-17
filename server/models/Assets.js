@@ -10,5 +10,7 @@ const AssetSchema = new mongoose.Schema({
     required: true,
     trim: true
     },
+    public_id: { type: String }, // to store Cloudinary public_id for deletion
+    
 }, { timestamps: true });
 module.exports = mongoose.model("Asset", AssetSchema);
