@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Project = require("../models/Project");
-
-const { upload } = require("../config/cloudinary"); // import cloudinary upload
+const { upload, cloudinary } = require("../config/cloudinary"); // import cloudinary + upload
 
 // GET all projects
 router.get("/projects", async (req, res) => {
@@ -19,11 +18,14 @@ router.post("/projects", upload.single("image"), async (req, res) => {
   try {
     const newProject = new Project({
       ...req.body,
-      image: req.file ? req.file.path : "", // Cloudinary gives full URL
+      image: req.file ? req.file.path : "",       // ✅ Cloudinary URL
+      public_id: req.file ? req.file.filename : "" // ✅ Cloudinary public_id
     });
+
     const saved = await newProject.save();
     res.json(saved);
   } catch (err) {
+    console.error("❌ Project create error:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -31,14 +33,27 @@ router.post("/projects", upload.single("image"), async (req, res) => {
 // UPDATE project
 router.put("/projects/:id", upload.single("image"), async (req, res) => {
   try {
-    const updateData = { ...req.body };
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    // If new image uploaded, delete old one from Cloudinary
     if (req.file) {
-      updateData.image = req.file.path; // Cloudinary URL
+      if (project.public_id) {
+        await cloudinary.uploader.destroy(project.public_id, { resource_type: "image" });
+      }
+      project.image = req.file.path;       // ✅ new Cloudinary URL
+      project.public_id = req.file.filename; // ✅ new Cloudinary public_id
     }
-    const updated = await Project.findByIdAndUpdate(req.params.id, updateData, { new: true });
-    if (!updated) return res.status(404).json({ error: "Project not found" });
+
+    // Update other fields
+    project.title = req.body.title || project.title;
+    project.description = req.body.description || project.description;
+    project.location = req.body.location || project.location;
+
+    const updated = await project.save();
     res.json(updated);
   } catch (err) {
+    console.error("❌ Project update error:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -46,9 +61,18 @@ router.put("/projects/:id", upload.single("image"), async (req, res) => {
 // DELETE project
 router.delete("/projects/:id", async (req, res) => {
   try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    // Delete image from Cloudinary
+    if (project.public_id) {
+      await cloudinary.uploader.destroy(project.public_id, { resource_type: "image" });
+    }
+
     await Project.findByIdAndDelete(req.params.id);
     res.sendStatus(204);
   } catch (err) {
+    console.error("❌ Project delete error:", err);
     res.status(500).json({ error: err.message });
   }
 });
