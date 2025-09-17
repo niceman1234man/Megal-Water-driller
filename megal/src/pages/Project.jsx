@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React,{useState,useEffect} from "react";
 import axiosInstance from "../axiosInstance";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    axiosInstance
-      .get("/api/projects")
-      .then((res) => setProjects(res.data))
+    axiosInstance.get("/api/projects")
+      .then((res) => setProjects(res.data)) 
       .catch(() => setProjects([]));
   }, []);
 
@@ -20,8 +19,8 @@ const Projects = () => {
             Our Projects
           </h1>
           <p className="text-white/90 text-lg">
-            A showcase of water well drilling, pump installations, and
-            hydrogeological projects we've proudly delivered across Ethiopia.
+            A showcase of water well drilling, pump installations, and hydrogeological
+            projects we've proudly delivered across Ethiopia.
           </p>
         </div>
         <a
@@ -35,51 +34,44 @@ const Projects = () => {
 
       {/* Projects list */}
       <section className="max-w-7xl mx-auto py-10">
-        <div
-          id="projectsList"
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {projects.length > 0 ? (
+        <div id="projectsList" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.length === 0 ? (
+            <p className="text-gray-500 col-span-full text-center py-10">
+              No projects available
+            </p>
+          ) : (
             projects.map((project) => (
               <div
-                key={project._id}
-                className="border-b py-4 flex items-start justify-between gap-4 hover:bg-gray-50"
+                key={project._id} // ✅ unique key
+                className="bg-white border rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-transform hover:-translate-y-1"
               >
-                <div className="flex-1">
-                  <h3 className="font-bold text-blue-700">{project.title}</h3>
-                  <p className="text-sm text-gray-600">{project.description}</p>
-                  <div className="text-sm text-gray-500 italic mt-1">
-                    <p>Client: {project.client}</p>
-                    <p>Location: {project.location}</p>
-                    <p>
-                      Budget: {project.budget} {project.unit}
-                    </p>
-                    <p>Contractor: {project.contractor}</p>
-                    <p>
-                      Status: {project.status} ({project.percentageOfCompletion}
-                      %)
-                    </p>
-                    <p>Acceptance: {project.acceptance}</p>
-                    <p>Role of Binder: {project.roleOfBinder}</p>
-                    <p>
-                      Start: {new Date(project.startDate).toDateString()} | End:{" "}
-                      {new Date(project.endDate).toDateString()}
-                    </p>
-                  </div>
+                <img
+                  src={`${project.image}`}
+                  alt={project.title}
+                  className="h-48 w-full object-cover"
+                />
+                 <div className="flex-1">
+                <h3 className="font-bold text-blue-700">{project.title}</h3>
+                <p className="text-sm text-gray-600">{project.description}</p>
+                <div className="text-sm text-gray-500 italic mt-1">
+                  <p>Client: {project.client}</p>
+                  <p>Location: {project.location}</p>
+                  <p>Budget: {project.budget} {project.unit}</p>
+                  <p>Contractor: {project.contractor}</p>
+                  <p>
+                    Status: {project.status} ({project.percentageOfCompletion}
+                    %)
+                  </p>
+                  <p>Acceptance: {project.acceptance}</p>
+                  <p>Role of Binder: {project.roleOfBinder}</p>
+                  <p>
+                    Start: {new Date(project.startDate).toDateString()} | End:{" "}
+                    {new Date(project.endDate).toDateString()}
+                  </p>
                 </div>
-                {project.image && (
-                  <img
-                    src={`${project.image}`}
-                    alt="project"
-                    className="w-24 h-24 object-cover rounded shadow"
-                  />
-                )}
-
-               
+              </div>
               </div>
             ))
-          ) : (
-            <p className="text-gray-500 text-center">No projects found.</p>
           )}
         </div>
       </section>
