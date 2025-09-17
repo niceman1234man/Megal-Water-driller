@@ -84,8 +84,6 @@ router.put("/gallery/:id", upload.single("file"), async (req, res) => {
 });
 
 
-
-
 // Delete media
 router.delete("/gallery/:id", async (req, res) => {
   try {
