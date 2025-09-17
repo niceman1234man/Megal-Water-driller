@@ -13,25 +13,32 @@ export default function Home() {
   const [projects, setProjects] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [contact, setContact] = useState({});
-useEffect(() => {
-  axiosInstance.get("/api/services") // updated URL
-    .then((res) => setServices(res.data));
-    axiosInstance.get("/api/contact").then((res) => setContact(res.data)).catch(() => setContact({}));
-  axiosInstance.get("/api/projects")
-    .then((res) => setProjects(res.data.slice(0, 3)))
-    .catch(() => setProjects([]));
-}, []);
-
   useEffect(() => {
-  //   axios.get("/api/services").then((res) => setServices(res.data)).catch(() => setServices([]));
-  //   axios.get("/api/projects").then((res) => setProjects(res.data.slice(0, 3))).catch(() => setProjects([]));
-  //   axios.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
-    
+    axiosInstance
+      .get("/api/services") // updated URL
+      .then((res) => setServices(res.data));
+    axiosInstance
+      .get("/api/contact")
+      .then((res) => setContact(res.data))
+      .catch(() => setContact({}));
+    axiosInstance
+      .get("/api/projects")
+      .then((res) => setProjects(res.data.slice(0, 3)))
+      .catch(() => setProjects([]));
   }, []);
 
+  useEffect(() => {
+    //   axios.get("/api/services").then((res) => setServices(res.data)).catch(() => setServices([]));
+    //   axios.get("/api/projects").then((res) => setProjects(res.data.slice(0, 3))).catch(() => setProjects([]));
+    //   axios.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
+  }, []);
 
-  const projectsToRender = Array.isArray(projects) && projects.length > 0 ? projects : mockProjects;
-  const testimonialsToRender = Array.isArray(testimonials) && testimonials.length > 0 ? testimonials : mockTestimonials;
+  const projectsToRender =
+    Array.isArray(projects) && projects.length > 0 ? projects : mockProjects;
+  const testimonialsToRender =
+    Array.isArray(testimonials) && testimonials.length > 0
+      ? testimonials
+      : mockTestimonials;
 
   return (
     <div>
@@ -40,30 +47,30 @@ useEffect(() => {
         style={{ backgroundImage: `url(${heroImage})` }}
         id="home"
       >
-       
+        {console.log(services)}
+
         <div className="absolute top-0 left-0 right-0 z-20 bg-blue-800 bg-opacity-90 text-white text-xs md:text-sm px-4 py-2 flex flex-col md:flex-row justify-center items-center gap-2">
-          {
-            contact && contact.phones && contact.phones.length > 0 && (
-              <p>📞 {contact.phones.join(" / ")}</p>
+          {contact && contact.phones && contact.phones.length > 0 && (
+            <p>📞 {contact.phones.join(" / ")}</p>
           )}
-          
+
           {contact && contact.emails && contact.emails.length > 0 && (
             <p>📧 {contact.emails.join(" / ")}</p>
           )}
-     
-          {contact && contact.address && (
-            <p>🏠 {contact.address}</p>
-          )}
-         
+
+          {contact && contact.address && <p>🏠 {contact.address}</p>}
         </div>
 
         <div className="absolute inset-0 bg-blue-600 bg-opacity-70 flex items-center justify-center text-white text-center px-4 pt-20 z-10">
           <div>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-              Welcome <br />to <br />Megal Water Drilling
+              Welcome <br />
+              to <br />
+              Megal Water Drilling
             </h1>
             <p className="text-lg md:text-2xl max-w-2xl mx-auto">
-              Reliable, sustainable, and affordable water solutions across Ethiopia.
+              Reliable, sustainable, and affordable water solutions across
+              Ethiopia.
             </p>
             <a
               href="#services"
@@ -84,68 +91,107 @@ useEffect(() => {
           />
 
           <div>
-            <h2 className="text-3xl font-bold mb-4">About Megal Water Drilling</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              About Megal Water Drilling
+            </h2>
             <p className="text-gray-700 mb-4">
-              Megal Water Drilling is a leading company in Ethiopia, delivering high-quality water well drilling and sustainable groundwater solutions.
+              Megal Water Drilling is a leading company in Ethiopia, delivering
+              high-quality water well drilling and sustainable groundwater
+              solutions.
             </p>
             <p className="text-gray-700 mb-4">
-              Our mission is to provide access to clean and safe water by using modern equipment, skilled professionals, and environmentally responsible practices.
+              Our mission is to provide access to clean and safe water by using
+              modern equipment, skilled professionals, and environmentally
+              responsible practices.
             </p>
-            <p className="text-sm text-gray-500">💧 “Drilling water, building futures.”</p>
+            <p className="text-sm text-gray-500">
+              💧 “Drilling water, building futures.”
+            </p>
           </div>
         </div>
       </section>
 
       <section className="py-16 bg-gray-50" id="services">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Our Services</h2>
+          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
+            Our Services
+          </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-l-2 border-blue-600"
-              >
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600">{service.description}</p>
-              </div>
-            ))}
+            {Array.isArray(services) && services.length > 0 ? (
+              services.map((service) => (
+                <div key={service._id || service.id}>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 col-span-full text-center">
+                No services available
+              </p>
+            )}
           </div>
         </div>
       </section>
 
       <section className="py-16 bg-gray-50" id="projects">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Recent Projects</h2>
+          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
+            Recent Projects
+          </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-r-2 border-blue-600 overflow-hidden"
-              >
-                <img
-                  src={`${axiosInstance.defaults.baseURL}${project.image}`}
-                  alt={project.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-5">
-                  <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-600 mb-2">{project.description}</p>
-                  <p className="text-sm text-gray-500">📍 {project.location}</p>
+            {Array.isArray(projects) && projects.length > 0 ? (
+              projects.map((project) => (
+                <div
+                  key={project._id || project.id}
+                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-r-2 border-blue-600 overflow-hidden"
+                >
+                  <img
+                    src={`${project.image}`}
+                    alt={project.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-blue-700">{project.title}</h3>
+                    <p className="text-sm text-gray-600">
+                      {project.description}
+                    </p>
+                    <div className="text-sm text-gray-500 italic mt-1">
+                      <p>Client: {project.client}</p>
+                      <p>Location: {project.location}</p>
+                      <p>
+                        Budget: {project.budget} {project.unit}
+                      </p>
+                      <p>Contractor: {project.contractor}</p>
+                      <p>
+                        Status: {project.status} (
+                        {project.percentageOfCompletion}
+                        %)
+                      </p>
+                      <p>Acceptance: {project.acceptance}</p>
+                      <p>Role of Binder: {project.roleOfBinder}</p>
+                      <p>
+                        Start: {new Date(project.startDate).toDateString()} |
+                        End: {new Date(project.endDate).toDateString()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 col-span-full text-center">
+                No projects available
+              </p>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-white to-blue-50" id="testimonials">
+      <section
+        className="py-20 bg-gradient-to-b from-white to-blue-50"
+        id="testimonials"
+      >
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center text-blue-800 mb-14">
             What Our Clients Say
@@ -185,26 +231,18 @@ useEffect(() => {
 
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div>
-           
-          
-          
-     
-        
               <p className="mb-3">
-                 {
-            contact && contact.phones && contact.phones.length > 0 && (
-              <p>📞 {contact.phones.join(" / ")}</p>
-          )}
+                {contact && contact.phones && contact.phones.length > 0 && (
+                  <p>📞 {contact.phones.join(" / ")}</p>
+                )}
               </p>
               <p className="mb-3">
-              {contact && contact.emails && contact.emails.length > 0 && (
-            <p>📧 {contact.emails.join(" / ")}</p>
-          )}
+                {contact && contact.emails && contact.emails.length > 0 && (
+                  <p>📧 {contact.emails.join(" / ")}</p>
+                )}
               </p>
               <p className="mb-3">
-                  {contact && contact.address && (
-            <p>🏠 {contact.address}</p>
-          )}
+                {contact && contact.address && <p>🏠 {contact.address}</p>}
               </p>
             </div>
 
