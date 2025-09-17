@@ -25,7 +25,7 @@ const AboutUs = () => {
     <div className="bg-white text-blue-900">
       {/* Hero Section */}
       <section
-        className="relative h-[70vh] bg-cover bg-center flex items-center justify-center text-center"
+        className="relative h-screen bg-cover bg-center flex items-center justify-center text-center"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="absolute inset-0 bg-blue-600 bg-opacity-70"></div>
