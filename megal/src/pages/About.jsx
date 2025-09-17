@@ -20,7 +20,7 @@ const AboutUs = () => {
       .finally(() => setLoading(false));
   }, []);
   return (
-    <section className="bg-white text-blue-900 px-6 pb-6">
+    <section className="bg-white text-blue-900  pb-6">
       
         {/* Page Header */}
         <div className="bg-blue-600">
