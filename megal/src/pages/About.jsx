@@ -20,16 +20,16 @@ const AboutUs = () => {
       .finally(() => setLoading(false));
   }, []);
   return (
-    <section className="bg-white text-blue-900 ">
+    <section className="bg-white text-blue-900 px-6 py-12 space-y-12">
       
         {/* Page Header */}
-        <div className="bg-blue-700">
+        <div className="bg-blue-600">
              <section className="relative h-screen w-full overflow-hidden bg-blue-700">
           
 
           {/* Overlay Text */}
           <div className="absolute inset-0  bg-opacity-60 flex items-center justify-center">
-            <div className="text-center px-4 text-blue-950">
+            <div className="text-center px-4 text-white">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 About Megal Water Drilling PLC
               </h1>
