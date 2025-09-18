@@ -18,7 +18,7 @@ import Project from './pages/Project.jsx'
 import GalleryAdmin from './admin/Gallery.jsx'
 import Testimonialss from './admin/Testimonials.jsx'
 import MessageAdmin from './admin/MessageAdmin.jsx'
-import ForgotPassword from './admin/ForgotPassword.jsx'
+import ForgotPassword from './admin/ForgotPassword.jsx
 import ResetPassword from './admin/ResetPassword.jsx'
 import ChangePassword from './admin/ChangePassword.jsx'
  import { ToastContainer, toast } from 'react-toastify';
@@ -46,7 +46,7 @@ function App() {
            <Route path="/admin/gallery" element={<GalleryAdmin />} />
             <Route path="/admin/messages" element={<MessageAdmin />} />
             <Route path="/admin/forgot-password" element={<ForgotPassword />} />
-            <Route path='/admin/change-password' element={<ChangePassword/>}/>
+            <Route path="/admin/change-password" element={<ChangePassword/>}/>
 <Route path="/reset-password" element={<ResetPassword />} />
 
     </Routes>
