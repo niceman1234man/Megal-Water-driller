@@ -18,7 +18,7 @@ const ContactUs = () => {
       .catch(() => setContact({}));
   }, []);
 
-  // ✅ Validation function
+ 
   const validateForm = () => {
     const { name, email, subject, message } = formData;
 
