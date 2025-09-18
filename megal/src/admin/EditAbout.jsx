@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
- import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import axiosInstance from "../axiosInstance";
 
 export default function EditAbout() {
@@ -7,8 +7,8 @@ export default function EditAbout() {
     overview: "",
     mission: "",
     vision: "",
-    goal: "",
-    licenseUrl: "",
+    goals: "",
+    licenses: [],
   });
   const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,8 @@ export default function EditAbout() {
 
   // Load current about info
   useEffect(() => {
-    axiosInstance.get("/api/about")
+    axiosInstance
+      .get("/api/about")
       .then((res) => setAbout(res.data))
       .catch(() => toast.error("Failed to load About content"))
       .finally(() => setLoading(false));
@@ -27,6 +28,7 @@ export default function EditAbout() {
     setAbout({ ...about, [e.target.name]: e.target.value });
   };
 
+  // Upload PDF to backend
   const handlePDFUpload = async () => {
     if (!pdfFile) return null;
 
@@ -34,37 +36,55 @@ export default function EditAbout() {
     formData.append("file", pdfFile);
 
     try {
-      const res = await axiosInstance.post("/api/about", formData, {
+      const res = await axiosInstance.post("/api/about/license", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      return res.data.url; // assuming server returns { url: "..." }
+      toast.success("License uploaded!");
+      return res.data;
     } catch {
       toast.error("Failed to upload license PDF");
       return null;
     }
   };
 
+  // Save About (overview, mission, vision, goals)
   const handleSave = async () => {
-    let uploadedUrl = about.licenseUrl;
-    if (pdfFile) {
-      const result = await handlePDFUpload();
-      if (result) uploadedUrl = result;
-    }
-
     try {
-      await axiosInstance.put(
+      const res = await axiosInstance.put(
         "/api/about",
-        { ...about, licenseUrl: uploadedUrl },
         {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+          overview: about.overview,
+          mission: about.mission,
+          vision: about.vision,
+          goals: about.goals,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+      setAbout(res.data);
       toast.success("About section updated successfully!");
     } catch {
-      toast.error("Failed to update.");
+      toast.error("Failed to update About content.");
+    }
+  };
+
+  // Delete license
+  const handleDeleteLicense = async (licenseId) => {
+    if (!window.confirm("Delete this license?")) return;
+
+    try {
+      await axiosInstance.delete(`/api/about/license/${licenseId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAbout({
+        ...about,
+        licenses: about.licenses.filter((l) => l._id !== licenseId),
+      });
+      toast.success("License deleted!");
+    } catch {
+      toast.error("Failed to delete license.");
     }
   };
 
@@ -77,7 +97,7 @@ export default function EditAbout() {
           <p className="text-gray-600">Loading...</p>
         ) : (
           <>
-            {["overview", "mission", "vision", "goal"].map((field) => (
+            {["overview", "mission", "vision", "goals"].map((field) => (
               <div key={field} className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 capitalize mb-1">
                   {field}
@@ -92,9 +112,10 @@ export default function EditAbout() {
               </div>
             ))}
 
-            <div className="mb-4">
+            {/* License Upload */}
+            <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                License PDF (optional)
+                Upload New License (PDF)
               </label>
               <input
                 type="file"
@@ -102,13 +123,45 @@ export default function EditAbout() {
                 onChange={(e) => setPdfFile(e.target.files[0])}
                 className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-white file:bg-blue-600 hover:file:bg-blue-700"
               />
-              {about.licenseUrl && (
-                <p className="text-sm text-blue-600 mt-1">
-                  Current License:{" "}
-                  <a href={about.licenseUrl} target="_blank" rel="noreferrer" className="underline">
-                    View PDF
-                  </a>
-                </p>
+              <button
+                onClick={handlePDFUpload}
+                className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+              >
+                Upload License
+              </button>
+            </div>
+
+            {/* Existing Licenses */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-blue-700 mb-2">
+                Existing Licenses
+              </h2>
+              {about.licenses && about.licenses.length > 0 ? (
+                <ul className="space-y-2">
+                  {about.licenses.map((license) => (
+                    <li
+                      key={license._id}
+                      className="flex justify-between items-center bg-gray-50 p-3 rounded shadow-sm"
+                    >
+                      <a
+                        href={license.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600 underline"
+                      >
+                        {license.filename || "View License"}
+                      </a>
+                      <button
+                        onClick={() => handleDeleteLicense(license._id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-600">No licenses uploaded yet.</p>
               )}
             </div>
 
