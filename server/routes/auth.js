@@ -62,7 +62,7 @@ router.post("/forgot-password", async (req, res) => {
     user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
     await user.save();
 
-    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+    const resetLink = `https://megal-water-driller.onrender.com/reset-password?token=${resetToken}`;
 
     // Send email
     await sendEmail(
