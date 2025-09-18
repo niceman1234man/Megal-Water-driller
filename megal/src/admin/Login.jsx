@@ -55,7 +55,11 @@ function Login() {
         >
           Sign In
         </button>
-
+           <div className="mt-8 text-center">
+          <Link to="/admin/forgot-password" className="text-sm text-blue-500 hover:underline">
+            Foregot Password
+          </Link>
+        </div>
         <p className="mt-4 text-sm text-center text-gray-500">
           © {new Date().getFullYear()} Megal Water Well Drilling PLC
         </p>

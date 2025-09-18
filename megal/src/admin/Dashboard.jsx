@@ -20,7 +20,7 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link to="/admin/settings" className="text-sm text-blue-500 hover:underline">
+          <Link to="/admin/change-password'" className="text-sm text-blue-500 hover:underline">
             Change Admin Password
           </Link>
         </div>
