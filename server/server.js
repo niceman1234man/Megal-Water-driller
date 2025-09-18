@@ -2,6 +2,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require("path");
 const app = express();
 const PORT = 5000;
 const mongoose = require("mongoose");
