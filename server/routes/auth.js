@@ -104,11 +104,11 @@ router.post("/change-password", auth, async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
-    // Find user by token (auth middleware attaches req.user.id)
+    
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Check old password
+  
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) return res.status(400).json({ message: "Old password is incorrect" });
 
