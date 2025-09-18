@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("/api/auth/login", form);
+      const res = await axios.post("http://localhost:5000/api/auth/login", form); 
       localStorage.setItem("token", res.data.token);
       setError("");
       alert("Login successful!");
-      // Redirect to dashboard after login
       window.location.href = "/admin/dashboard";
-    } catch {
-      setError("Invalid username or password.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid email or password.");
     }
   };
 
@@ -26,18 +25,16 @@ function Login() {
         </h2>
 
         {error && (
-          <div className="mb-4 text-red-600 text-sm text-center">
-            {error}
-          </div>
+          <div className="mb-4 text-red-600 text-sm text-center">{error}</div>
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1 font-medium">Username</label>
+          <label className="block text-gray-700 mb-1 font-medium">Email</label>
           <input
-            type="text"
-            placeholder="admin username"
+            type="email"
+            placeholder="admin email"
             className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
         </div>
 
