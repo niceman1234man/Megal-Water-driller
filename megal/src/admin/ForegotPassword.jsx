@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axiosInstance from "../axiosInstance";
-
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -8,7 +7,7 @@ function ForgotPassword() {
   const handleForgot = async () => {
     try {
       const res = await axiosInstance.post("/api/auth/forgot-password", { email });
-      setMessage(`Reset token: ${res.data.resetToken}`);
+      setMessage(res.data.message);
     } catch (err) {
       setMessage(err.response?.data?.message || "Error occurred");
     }
@@ -33,7 +32,7 @@ function ForgotPassword() {
           onClick={handleForgot}
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
-          Send Reset Token
+          Send Reset Email
         </button>
       </div>
     </div>

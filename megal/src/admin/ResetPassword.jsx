@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 
 function ResetPassword() {
+  const [searchParams] = useSearchParams();
+  const tokenFromUrl = searchParams.get("token");
+
   const [form, setForm] = useState({ token: "", password: "" });
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (tokenFromUrl) {
+      setForm((prev) => ({ ...prev, token: tokenFromUrl }));
+    }
+  }, [tokenFromUrl]);
 
   const handleReset = async () => {
     try {
@@ -21,14 +31,6 @@ function ResetPassword() {
         <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">Reset Password</h2>
 
         {message && <p className="text-center text-sm mb-4 text-green-600">{message}</p>}
-
-        <input
-          type="text"
-          value={form.token}
-          onChange={(e) => setForm({ ...form, token: e.target.value })}
-          placeholder="Enter reset token"
-          className="w-full border border-gray-300 p-2 rounded mb-4 focus:ring-2 focus:ring-blue-400"
-        />
 
         <input
           type="password"
