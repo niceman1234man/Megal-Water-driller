@@ -16,6 +16,7 @@ export default function Dashboard() {
           <AdminCard title="Manage Gallery" path="/admin/gallery" />
           <AdminCard title="Manage Testimonials" path="/admin/testimonials" />
           <AdminCard title="Edit Contact Info" path="/admin/contact" />
+          <AdminCard title="View Messages" path="/admin/messages" />
         </div>
 
         <div className="mt-8 text-center">
