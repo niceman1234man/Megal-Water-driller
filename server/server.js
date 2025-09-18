@@ -12,6 +12,8 @@ const galleryRoutes = require('./routes/gallary');
 const aboutRoutes = require('./routes/about');
 const socialMediaRoutes = require("./routes/socialMedia");
 const testimonalRoutes = require("./routes/testimonials");
+const contactRoutes = require("./routes/contact");
+
 const dotenv = require("dotenv");
 dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
@@ -45,10 +47,9 @@ app.use('/api',galleryRoutes);
 app.use('/api',aboutRoutes);
 app.use("/api/socialmedia", socialMediaRoutes);
 app.use("/api/testimonials", testimonalRoutes);
-
-
+app.use("/api/messages", contactRoutes);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on https://megal-water-driller.netlify.app:${PORT}`);
 });
