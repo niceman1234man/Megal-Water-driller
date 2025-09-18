@@ -1,67 +1,89 @@
 const express = require("express");
 const router = express.Router();
 const About = require("../models/About");
+const { upload } = require("../config/cloudinary"); // use cloudinary storage
 
-const multer = require("multer");
-const path = require("path");
-
-// File upload setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/licenses"),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage });
-
-// GET full about content
+// ✅ GET full about content
 router.get("/about", async (req, res) => {
-  const about = await About.findOne();
-  res.json(about || {
-    overview: "",
-    mission: "",
-    vision: "",
-    goals: "",
-    licenses: []
-  });
+  try {
+    const about = await About.findOne();
+    res.json(
+      about || {
+        overview: "",
+        mission: "",
+        vision: "",
+        goals: "",
+        licenses: [],
+      }
+    );
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// UPDATE about fields (without file upload)
-router.put("/about",  async (req, res) => {
-  const { overview, mission, vision, goals } = req.body;
-  const updated = await About.findOneAndUpdate(
-    {},
-    { overview, mission, vision, goals },
-    { upsert: true, new: true }
-  );
-  res.json(updated);
+// ✅ UPDATE about fields (overview, mission, vision, goals)
+router.put("/about", async (req, res) => {
+  try {
+    const { overview, mission, vision, goals } = req.body;
+    const updated = await About.findOneAndUpdate(
+      {},
+      { overview, mission, vision, goals },
+      { upsert: true, new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// POST upload license PDF
-router.post("/about",  upload.single("file"), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+// ✅ UPLOAD a new license (PDF/image)
+router.post("/about/license", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-  const fileData = {
-    filename: req.file.originalname,
-    url: `/uploads/licenses/${req.file.filename}`
-  };
+    const fileData = {
+      filename: req.file.originalname,
+      url: req.file.path, // Cloudinary URL
+      public_id: req.file.filename, // Cloudinary public_id
+    };
 
-  let about = await About.findOne();
-  if (!about) about = new About({ licenses: [] });
-  about.licenses.push(fileData);
-  await about.save();
+    let about = await About.findOne();
+    if (!about) about = new About({ licenses: [] });
 
-  res.json(fileData);
+    about.licenses.push(fileData);
+    await about.save();
+
+    res.status(201).json(fileData);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// DELETE a license PDF by index
-router.delete("/licenses/:index",  async (req, res) => {
-  const { index } = req.params;
-  const about = await About.findOne();
-  if (!about || !about.licenses[index]) return res.status(404).json({ error: "License not found" });
+// ✅ DELETE a license by license ID
+router.delete("/about/license/:licenseId", async (req, res) => {
+  try {
+    const { licenseId } = req.params;
+    const about = await About.findOne();
+    if (!about) return res.status(404).json({ error: "About not found" });
 
-  about.licenses.splice(index, 1);
-  await about.save();
+    // find license
+    const licenseIndex = about.licenses.findIndex((l) => l._id.toString() === licenseId);
+    if (licenseIndex === -1) return res.status(404).json({ error: "License not found" });
 
-  res.json({ success: true });
+    // remove from cloudinary if stored
+    if (about.licenses[licenseIndex].public_id) {
+      const { cloudinary } = require("../config/cloudinary");
+      await cloudinary.uploader.destroy(about.licenses[licenseIndex].public_id, { resource_type: "raw" });
+    }
+
+    // remove from db
+    about.licenses.splice(licenseIndex, 1);
+    await about.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
