@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const crypto = require("crypto");
-
+const sendEmail = require("../utils/sendEmail");
 const router = express.Router();
 
 // REGISTER
@@ -57,11 +57,19 @@ router.post("/forgot-password", async (req, res) => {
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
     user.resetToken = resetToken;
-    user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 min expiry
+    user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
     await user.save();
 
-    // In production: send via email
-    res.json({ message: "Reset token generated", resetToken });
+    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+
+    // Send email
+    await sendEmail(
+      user.email,
+      "Password Reset Request",
+      `You requested a password reset. Click the link below to reset your password:\n\n${resetLink}\n\nIf you didn't request this, ignore this email.`
+    );
+
+    res.json({ message: "Password reset email sent" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
