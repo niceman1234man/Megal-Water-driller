@@ -46,7 +46,7 @@ router.post("/messages", async (req, res) => {
           Message: ${message}
         `,
         html: `
-          <h3>New Message from Website</h3>
+          <h3>New Message from Megal Water Driller Website</h3>
           <p><b>Name:</b> ${name}</p>
           <p><b>Email:</b> ${email}</p>
           <p><b>Subject:</b> ${subject}</p>
