@@ -39,7 +39,7 @@ app.use(cors({
   // credentials: true // Allow credentials if needed
 }));
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/api',contactInfoRoutes);
 app.use('/api',servicesRoutes)
 app.use('/api',projectsRoutes);
