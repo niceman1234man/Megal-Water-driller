@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
+import { toast } from "react-toastify";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -7,10 +8,10 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", form); 
+      const res = await axiosInstance.post("/api/auth/login", form); 
       localStorage.setItem("token", res.data.token);
       setError("");
-      alert("Login successful!");
+      toast.success("Login successful!");
       window.location.href = "/admin/dashboard";
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password.");

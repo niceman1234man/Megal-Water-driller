@@ -14,6 +14,7 @@ const aboutRoutes = require('./routes/about');
 const socialMediaRoutes = require("./routes/socialMedia");
 const testimonalRoutes = require("./routes/testimonials");
 const contactRoutes = require("./routes/contact");
+const authRoutes = require("./routes/auth");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -35,9 +36,9 @@ mongoose.connect(MONGO_URI, {
 
 // Middleware
 app.use(cors({
-  origin: 'https://megal-water-driller.netlify.app', // Adjust this to your frontend URL
+  origin: 'https://megal-water-driller.netlify.app', 
   methods: [ 'GET', 'POST', 'PUT', 'DELETE'],
-  // credentials: true // Allow credentials if needed
+  
 }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -49,7 +50,7 @@ app.use('/api',aboutRoutes);
 app.use("/api/socialmedia", socialMediaRoutes);
 app.use("/api/testimonials", testimonalRoutes);
 app.use("/api", contactRoutes);
-
+app.use("/api/auth", authRoutes);
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on https://megal-water-driller.netlify.app:${PORT}`);
