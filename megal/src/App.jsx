@@ -17,6 +17,7 @@ import ContactUs from './pages/ContactUs.jsx'
 import Project from './pages/Project.jsx'
 import GalleryAdmin from './admin/Gallery.jsx'
 import Testimonialss from './admin/Testimonials.jsx'
+import MessageAdmin from './admin/MessageAdmin.jsx'
  import { ToastContainer, toast } from 'react-toastify';
   
 function App() {
@@ -40,6 +41,7 @@ function App() {
            <Route path="/admin/testimonials" element={<Testimonialss />} />
            <Route path="/admin/contact" element={<ContactSettings />} />
            <Route path="/admin/gallery" element={<GalleryAdmin />} />
+            <Route path="/admin/messages" element={<MessageAdmin />} />
     </Routes>
 
       
