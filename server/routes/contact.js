@@ -1,89 +1,82 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
+const router = express.Router();
 const ContactMessage = require("../models/ContactMessage");
 const ContactInfo = require("../models/ContactInfo");
-
-const router = express.Router();
-
-
+const nodemailer = require("nodemailer");
 
 const Message = ContactMessage;
+const Contact = ContactInfo;
 
-router.post("/", async (req, res) => {
+// ✅ Create transporter (use Gmail or your SMTP service)
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // your sender email
+    pass: process.env.EMAIL_PASS, // app password
+  },
+});
+
+// 📩 POST - Save message + send email
+router.post("/messages", async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
-    // 1️⃣ Save the message in DB
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Save to MongoDB
     const newMessage = new Message({ name, email, subject, message });
     await newMessage.save();
 
-    // 2️⃣ Fetch admin emails from ContactInfo collection
-    const contactInfo = await ContactInfo.findOne();
-    if (!contactInfo || !contactInfo.email || contactInfo.email.length === 0) {
-      return res.status(500).json({ error: "No admin emails configured" });
+    // Get admin emails from Contact collection
+    const contact = await Contact.findOne();
+    const adminEmails = contact?.emails || [];
+
+    if (adminEmails.length > 0) {
+      // Send email to all admins
+      await transporter.sendMail({
+        from: "Megal Water Driller",
+        to: adminEmails.join(","),
+        subject: `📩 New Contact Message: ${subject}`,
+        text: `
+          Name: ${name}
+          Email: ${email}
+          Subject: ${subject}
+          Message: ${message}
+        `,
+        html: `
+          <h3>New Message from Website</h3>
+          <p><b>Name:</b> ${name}</p>
+          <p><b>Email:</b> ${email}</p>
+          <p><b>Subject:</b> ${subject}</p>
+          <p><b>Message:</b> ${message}</p>
+        `,
+      });
     }
 
-    // 3️⃣ Setup nodemailer transport (using Gmail as example)
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER, // your email
-        pass: process.env.EMAIL_PASS, // your app password
-      },
-    });
-
-    // 4️⃣ Mail options
-    const mailOptions = {
-      from: `"Megal Water Driller Contact Form" <${process.env.EMAIL_USER}>`,
-      to: contactInfo.adminEmails, // send to multiple admins
-      subject: `📩 New Contact Message: ${subject}`,
-      text: `
-        Name: ${name}
-        Email: ${email}
-        Subject: ${subject}
-        Message:
-        ${message}
-      `,
-      html: `
-        <h2>📩 New Contact Message</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
-      `,
-    };
-
-    // 5️⃣ Send email
-    await transporter.sendMail(mailOptions);
-
-    res.json({ success: true, message: "Message sent and saved successfully!" });
+    res.status(201).json({ success: true, message: "Message sent successfully!" });
   } catch (err) {
-    console.error("❌ Contact error:", err);
-    res.status(500).json({ error: "Failed to send message" });
+    console.error("❌ Error in /messages:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-module.exports = router;
-
-
-// 📋 Get all messages (admin dashboard)
-router.get("/contact", async (req, res) => {
+// 📥 GET all messages (for Admin Dashboard)
+router.get("/messages", async (req, res) => {
   try {
-    const messages = await ContactMessage.find().sort({ createdAt: -1 });
+    const messages = await Message.find().sort({ createdAt: -1 });
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.delete("/:id", async (req, res) => {
+// 🗑️ DELETE message
+router.delete("/messages/:id", async (req, res) => {
   try {
-    const deleted = await Message.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ error: "Message not found" });
-    }
-    res.json({ success: true, message: "Message deleted successfully" });
+    await Message.findByIdAndDelete(req.params.id);
+    res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
