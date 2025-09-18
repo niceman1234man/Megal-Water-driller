@@ -47,7 +47,7 @@ app.use('/api',galleryRoutes);
 app.use('/api',aboutRoutes);
 app.use("/api/socialmedia", socialMediaRoutes);
 app.use("/api/testimonials", testimonalRoutes);
-app.use("/api/messages", contactRoutes);
+app.use("/api", contactRoutes);
 
 // Start server
 app.listen(PORT, () => {
