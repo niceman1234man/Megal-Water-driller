@@ -23,40 +23,100 @@ import ResetPassword from './admin/ResetPassword.jsx'
 import ChangePassword from './admin/ChangePassword.jsx'
  import { ToastContainer, toast } from 'react-toastify';
   
+import 'react-toastify/dist/ReactToastify.css';
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 function App() {
   return (
     <>
-    <Navbar />
-    <div className="pt-20"> {/* Push content below fixed nav */}
-    <Routes>
-      <Route path='/' element={<Home/>}/>
-         <Route path='/about' element={<AboutUs/>}/>
-          <Route path='/contact' element={<ContactUs/>}/>
-        <Route path="/services" element={<Servicess />} />
-        <Route path="/projects" element={<Project />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/testimonials" element={<Testimonials />} />
-         <Route path='/admin/login' element={<Login/>}/>
-           <Route path='/admin/dashboard' element={<Dashboard/>}/>
-           <Route path="/admin/edit-about" element={<EditAbout />} />
-           <Route path="/admin/services" element={<Services />} />
-           <Route path="/admin/projects" element={<Projects />} />
-           <Route path="/admin/testimonials" element={<Testimonialss />} />
-           <Route path="/admin/contact" element={<ContactSettings />} />
-           <Route path="/admin/gallery" element={<GalleryAdmin />} />
-            <Route path="/admin/messages" element={<MessageAdmin />} />
-            <Route path="/admin/forgot-password" element={<ForgotPassword />} />
-            <Route path="/admin/change-password" element={<ChangePassword/>}/>
-<Route path="/reset-password" element={<ResetPassword />} />
+      <Navbar />
+      <div className="pt-20">
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/services" element={<Servicess />} />
+          <Route path="/projects" element={<Project />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/testimonials" element={<Testimonials />} />
 
-    </Routes>
+          {/* Auth routes */}
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin/change-password" element={<ChangePassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-      
+          {/* Protected admin routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/edit-about"
+            element={
+              <ProtectedRoute>
+                <EditAbout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/services"
+            element={
+              <ProtectedRoute>
+                <Services />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/projects"
+            element={
+              <ProtectedRoute>
+                <Projects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/testimonials"
+            element={
+              <ProtectedRoute>
+                <Testimonialss />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/contact"
+            element={
+              <ProtectedRoute>
+                <ContactSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/gallery"
+            element={
+              <ProtectedRoute>
+                <GalleryAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/messages"
+            element={
+              <ProtectedRoute>
+                <MessageAdmin />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </div>
-        <ToastContainer />
-      <Footer/>
+      <ToastContainer />
+      <Footer />
     </>
-  )
+  );
 }
 
 export default App
