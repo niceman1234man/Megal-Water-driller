@@ -22,7 +22,6 @@ import ForgotPassword from './admin/ForgotPassword.jsx'
 import ResetPassword from './admin/ResetPassword.jsx'
 import ChangePassword from './admin/ChangePassword.jsx'
  import { ToastContainer, toast } from 'react-toastify';
-  
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 function App() {

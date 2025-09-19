@@ -3,12 +3,12 @@ import { useSearchParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-const router = useNavigate();
+
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();
   const tokenFromUrl = searchParams.get("token");
-
+const router = useNavigate();
   const [form, setForm] = useState({ token: "", password: "" });
   const [message, setMessage] = useState("");
 

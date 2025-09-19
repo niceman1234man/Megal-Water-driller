@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-const router = useNavigate();
+
 function ChangePassword() {
   const [form, setForm] = useState({ oldPassword: "", newPassword: "" });
   const [message, setMessage] = useState("");
-
+const router = useNavigate();
   const handleChangePassword = async () => {
     try {
       const token = localStorage.getItem("token");
