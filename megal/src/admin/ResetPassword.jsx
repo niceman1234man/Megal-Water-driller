@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+const router = useNavigate();
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -18,8 +21,10 @@ function ResetPassword() {
   const handleReset = async () => {
     try {
       const res = await axiosInstance.post("/api/auth/reset-password", form);
-      setMessage(res.data.message);
+      toast.success(res.data.message);
       setForm({ token: "", password: "" });
+      router.push("/admin/login");
+      
     } catch (err) {
       setMessage(err.response?.data?.message || "Error occurred");
     }

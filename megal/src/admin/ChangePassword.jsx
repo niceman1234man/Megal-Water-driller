@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import axiosInstance from "../axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+const router = useNavigate();
 function ChangePassword() {
   const [form, setForm] = useState({ oldPassword: "", newPassword: "" });
   const [message, setMessage] = useState("");
@@ -12,8 +15,9 @@ function ChangePassword() {
         form,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage(res.data.message);
+      toast.success(res.data.message);
       setForm({ oldPassword: "", newPassword: "" });
+      router.push("/admin/login");
     } catch (err) {
       setMessage(err.response?.data?.message || "Error occurred");
     }
