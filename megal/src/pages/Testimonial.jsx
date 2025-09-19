@@ -1,67 +1,135 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../axiosInstance";
+import { toast } from "react-toastify";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-// Use the local worker file from node_modules
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf-worker/pdf.worker.min.js"; // you'll create this next
+// setup worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-const Testimonial = () => {
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+export default function Testimonials() {
+  const [testimonials, setTestimonials] = useState([]);
+  const [pdfPages, setPdfPages] = useState({}); // track pages per testimonial
+  const token = localStorage.getItem("token");
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-    setPageNumber(1);
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const res = await axiosInstance.get("/api/testimonials");
+      setTestimonials(res.data);
+    } catch {
+      toast.error("Failed to fetch testimonials.");
+    }
   };
 
-  const goToPrevPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
-  const goToNextPage = () => setPageNumber((prev) => Math.min(prev + 1, numPages));
+  const isPDF = (filename) => filename?.toLowerCase().endsWith(".pdf");
+
+  const onDocumentLoadSuccess = (id, { numPages }) => {
+    setPdfPages((prev) => ({
+      ...prev,
+      [id]: { numPages, pageNumber: 1 },
+    }));
+  };
+
+  const goToPrevPage = (id) => {
+    setPdfPages((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        pageNumber: Math.max(prev[id].pageNumber - 1, 1),
+      },
+    }));
+  };
+
+  const goToNextPage = (id) => {
+    setPdfPages((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        pageNumber: Math.min(prev[id].pageNumber + 1, prev[id].numPages),
+      },
+    }));
+  };
 
   return (
-    <section className="min-h-screen py-20 bg-blue-50 text-center">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-blue-800 mb-8">
-          Client Testimonials & Recommendations
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+      <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+        <h1 className="text-2xl font-bold mb-6 text-blue-700">
+          Client Testimonials
         </h1>
 
-        <div className="bg-white shadow rounded p-4">
-          <Document
-            file="/pdfs/license.pdf"
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            <Page
-              pageNumber={pageNumber}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-            />
-          </Document>
-
-          <div className="mt-6 flex justify-between items-center text-blue-700 font-medium">
-            <button
-              onClick={goToPrevPage}
-              disabled={pageNumber <= 1}
-              className="bg-blue-200 px-4 py-2 rounded disabled:opacity-50"
+        {testimonials.length > 0 ? (
+          testimonials.map((t) => (
+            <div
+              key={t._id}
+              className="border-b py-6 flex flex-col gap-4 items-center"
             >
-              ⬅ Previous
-            </button>
+              <div className="text-center">
+                <p className="font-semibold text-blue-700">{t.name}</p>
+                <p className="text-sm text-gray-600 italic">{t.company}</p>
+                <p className="text-gray-700 mt-1">{t.comment}</p>
+              </div>
 
-            <span>
-              Page {pageNumber} of {numPages}
-            </span>
+              {/* Cloudinary file (PDF or image) */}
+              {t.image &&
+                (isPDF(t.image) ? (
+                  <div className="w-full bg-gray-50 p-4 rounded shadow">
+                    <Document
+                      file={t.image} // Cloudinary URL directly
+                      onLoadSuccess={(res) => onDocumentLoadSuccess(t._id, res)}
+                    >
+                      <Page
+                        pageNumber={pdfPages[t._id]?.pageNumber || 1}
+                        renderAnnotationLayer={false}
+                        renderTextLayer={false}
+                      />
+                    </Document>
 
-            <button
-              onClick={goToNextPage}
-              disabled={pageNumber >= numPages}
-              className="bg-blue-200 px-4 py-2 rounded disabled:opacity-50"
-            >
-              Next ➡
-            </button>
-          </div>
-        </div>
+                    {pdfPages[t._id] && (
+                      <div className="mt-3 flex justify-between items-center text-blue-700 font-medium">
+                        <button
+                          onClick={() => goToPrevPage(t._id)}
+                          disabled={pdfPages[t._id].pageNumber <= 1}
+                          className="bg-blue-200 px-3 py-1 rounded disabled:opacity-50"
+                        >
+                          ⬅ Previous
+                        </button>
+
+                        <span>
+                          Page {pdfPages[t._id].pageNumber} of{" "}
+                          {pdfPages[t._id].numPages}
+                        </span>
+
+                        <button
+                          onClick={() => goToNextPage(t._id)}
+                          disabled={
+                            pdfPages[t._id].pageNumber >=
+                            pdfPages[t._id].numPages
+                          }
+                          className="bg-blue-200 px-3 py-1 rounded disabled:opacity-50"
+                        >
+                          Next ➡
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <img
+                    src={t.image} // Cloudinary image URL
+                    alt="client"
+                    className="w-32 h-32 object-cover rounded-full shadow"
+                  />
+                ))}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 text-center">No testimonials found.</p>
+        )}
       </div>
-    </section>
+    </div>
   );
-};
-
-export default Testimonial;
+}
