@@ -5,9 +5,28 @@ import { toast } from "react-toastify";
 
 function ChangePassword() {
   const [form, setForm] = useState({ oldPassword: "", newPassword: "" });
-  const [message, setMessage] = useState("");
-const router = useNavigate();
+  const navigate = useNavigate();
+
+  // ✅ Password validation (8+ chars, uppercase, lowercase, number, special char)
+  const validatePassword = (password) => {
+    const strongRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongRegex.test(password);
+  };
+
   const handleChangePassword = async () => {
+    if (!form.oldPassword || !form.newPassword) {
+      toast.error("Both old and new passwords are required.");
+      return;
+    }
+
+    if (!validatePassword(form.newPassword)) {
+      toast.error(
+        "New password must be at least 8 characters, with uppercase, lowercase, number, and special char."
+      );
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const res = await axiosInstance.post(
@@ -15,20 +34,23 @@ const router = useNavigate();
         form,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success(res.data.message);
+
+      toast.success(res.data.message || "Password updated successfully!");
       setForm({ oldPassword: "", newPassword: "" });
-      router.push("/admin/login");
+
+      // ✅ Redirect user back to login
+      navigate("/admin/login");
     } catch (err) {
-      setMessage(err.response?.data?.message || "Error occurred");
+      toast.error(err.response?.data?.message || "Error occurred while changing password.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">Change Password</h2>
-
-        {message && <p className="text-center text-sm mb-4 text-green-600">{message}</p>}
+        <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
+          Change Password
+        </h2>
 
         <input
           type="password"
@@ -45,6 +67,9 @@ const router = useNavigate();
           placeholder="New password"
           className="w-full border border-gray-300 p-2 rounded mb-4 focus:ring-2 focus:ring-blue-400"
         />
+        <p className="text-xs text-gray-500 mb-4">
+          Must be 8+ chars, include uppercase, lowercase, number, and special character.
+        </p>
 
         <button
           onClick={handleChangePassword}
