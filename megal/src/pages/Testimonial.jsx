@@ -5,13 +5,13 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-// setup worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+// ✅ use pdfjs worker from pdfjs-dist instead of cdn
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min.js";
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
-  const [pdfPages, setPdfPages] = useState({}); // track pages per testimonial
-  const token = localStorage.getItem("token");
+  const [pdfPages, setPdfPages] = useState({}); // { testimonialId: { numPages, pageNumber } }
 
   useEffect(() => {
     fetchTestimonials();
@@ -26,7 +26,7 @@ export default function Testimonials() {
     }
   };
 
-  const isPDF = (filename) => filename?.toLowerCase().endsWith(".pdf");
+  const isPDF = (url) => url?.toLowerCase().endsWith(".pdf");
 
   const onDocumentLoadSuccess = (id, { numPages }) => {
     setPdfPages((prev) => ({
@@ -74,18 +74,23 @@ export default function Testimonials() {
                 <p className="text-gray-700 mt-1">{t.comment}</p>
               </div>
 
-              {/* Cloudinary file (PDF or image) */}
+              {/* ✅ Show Cloudinary PDF or Image */}
               {t.image &&
                 (isPDF(t.image) ? (
                   <div className="w-full bg-gray-50 p-4 rounded shadow">
                     <Document
-                      file={t.image} // Cloudinary URL directly
-                      onLoadSuccess={(res) => onDocumentLoadSuccess(t._id, res)}
+                      file={t.image} // Cloudinary PDF URL
+                      onLoadSuccess={(res) =>
+                        onDocumentLoadSuccess(t._id, res)
+                      }
+                      loading={<p className="text-gray-500">Loading PDF...</p>}
+                      error={<p className="text-red-500">Failed to load PDF</p>}
                     >
                       <Page
                         pageNumber={pdfPages[t._id]?.pageNumber || 1}
                         renderAnnotationLayer={false}
                         renderTextLayer={false}
+                        className="shadow rounded"
                       />
                     </Document>
 
