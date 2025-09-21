@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { toast } from "react-toastify";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
-  const [pdfPages, setPdfPages] = useState({}); // { testimonialId: { numPages, pageNumber } }
 
   useEffect(() => {
     fetchTestimonials();
@@ -24,33 +19,6 @@ export default function Testimonials() {
   };
 
   const isPDF = (url) => url?.toLowerCase().endsWith(".pdf");
-
-  const onDocumentLoadSuccess = (id, { numPages }) => {
-    setPdfPages((prev) => ({
-      ...prev,
-      [id]: { numPages, pageNumber: 1 },
-    }));
-  };
-
-  const goToPrevPage = (id) => {
-    setPdfPages((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        pageNumber: Math.max(prev[id].pageNumber - 1, 1),
-      },
-    }));
-  };
-
-  const goToNextPage = (id) => {
-    setPdfPages((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        pageNumber: Math.min(prev[id].pageNumber + 1, prev[id].numPages),
-      },
-    }));
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -71,61 +39,23 @@ export default function Testimonials() {
                 <p className="text-gray-700 mt-1">{t.comment}</p>
               </div>
 
-              {/* ✅ Show Cloudinary PDF or Image */}
-              {t.image &&
-                (isPDF(t.image) ? (
-                  <div className="w-full bg-gray-50 p-4 rounded shadow">
-                    <Document
-                      file={t.image} // Cloudinary PDF URL
-                      onLoadSuccess={(res) =>
-                        onDocumentLoadSuccess(t._id, res)
-                      }
-                      loading={<p className="text-gray-500">Loading PDF...</p>}
-                      error={<p className="text-red-500">Failed to load PDF</p>}
-                    >
-                      <Page
-                        pageNumber={pdfPages[t._id]?.pageNumber || 1}
-                        renderAnnotationLayer={false}
-                        renderTextLayer={false}
-                        className="shadow rounded"
-                      />
-                    </Document>
-
-                    {pdfPages[t._id] && (
-                      <div className="mt-3 flex justify-between items-center text-blue-700 font-medium">
-                        <button
-                          onClick={() => goToPrevPage(t._id)}
-                          disabled={pdfPages[t._id].pageNumber <= 1}
-                          className="bg-blue-200 px-3 py-1 rounded disabled:opacity-50"
-                        >
-                          ⬅ Previous
-                        </button>
-
-                        <span>
-                          Page {pdfPages[t._id].pageNumber} of{" "}
-                          {pdfPages[t._id].numPages}
-                        </span>
-
-                        <button
-                          onClick={() => goToNextPage(t._id)}
-                          disabled={
-                            pdfPages[t._id].pageNumber >=
-                            pdfPages[t._id].numPages
-                          }
-                          className="bg-blue-200 px-3 py-1 rounded disabled:opacity-50"
-                        >
-                          Next ➡
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <img
-                    src={t.image} // Cloudinary image URL
-                    alt="client"
-                    className="w-32 h-32 object-cover rounded-full shadow"
-                  />
-                ))}
+              {t.image && (
+                <>
+                  {isPDF(t.image) ? (
+                    <iframe
+                      src={t.image}
+                      title={t.name}
+                      className="w-full h-[500px] border rounded shadow"
+                    />
+                  ) : (
+                    <img
+                      src={t.image}
+                      alt={t.name}
+                      className="w-32 h-32 object-cover rounded-full shadow"
+                    />
+                  )}
+                </>
+              )}
             </div>
           ))
         ) : (
