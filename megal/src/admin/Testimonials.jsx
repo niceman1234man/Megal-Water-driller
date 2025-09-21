@@ -163,7 +163,7 @@ export default function Testimonials() {
               {t.image && (
                 isPDF(t.image) ? (
                   <a
-                    href={`${axiosInstance}${t.image}`}
+                    href={`${t.image}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-red-600 underline text-sm"
@@ -172,7 +172,7 @@ export default function Testimonials() {
                   </a>
                 ) : (
                   <img
-                    src={`${axiosInstance}${t.image}`}
+                    src={`${t.image}`}
                     alt="client"
                     className="w-20 h-20 object-cover rounded-full"
                   />
