@@ -160,24 +160,22 @@ export default function Testimonials() {
               </div>
 
               {/* File display (image or PDF link) */}
-              {t.image && (
-                isPDF(t.image) ? (
-                  <a
-                    href={`${t.image}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-red-600 underline text-sm"
-                  >
-                    View PDF
-                  </a>
-                ) : (
-                  <img
-                    src={`${t.image}`}
-                    alt="client"
-                    className="w-20 h-20 object-cover rounded-full"
-                  />
-                )
-              )}
+             {t.image && (
+  isPDF(t.image) ? (
+    <iframe
+      src={t.image}
+      title="testimonial-pdf"
+      className="w-48 h-48 border rounded"
+    ></iframe>
+  ) : (
+    <img
+      src={t.image}
+      alt="client"
+      className="w-20 h-20 object-cover rounded-full"
+    />
+  )
+)}
+
 
               <div className="flex flex-col gap-2">
                 <button
