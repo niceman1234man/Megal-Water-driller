@@ -5,6 +5,7 @@ const TestimonialSchema = new mongoose.Schema({
   comment: { type: String, required: true },
   company: String,
   image: String, // optional image (e.g., client photo or logo)
+  public_id:String,
   createdAt: { type: Date, default: Date.now }
 });
 
