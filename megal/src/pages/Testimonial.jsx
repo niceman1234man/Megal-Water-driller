@@ -39,23 +39,28 @@ export default function Testimonials() {
                 <p className="text-gray-700 mt-1">{t.comment}</p>
               </div>
 
-              {t.image && (
-                <>
-                  {isPDF(t.image) ? (
-                    <iframe
-                      src={t.image}
-                      title={t.name}
-                      className="w-full h-[500px] border rounded shadow"
-                    />
-                  ) : (
-                    <img
-                      src={t.image}
-                      alt={t.name}
-                      className="w-32 h-32 object-cover rounded-full shadow"
-                    />
-                  )}
-                </>
-              )}
+           
+
+{t.image && (
+  <>
+    {isPDF(t.image) ? (
+      <iframe
+        src={t.image.replace("/image/upload/", "/raw/upload/")} // convert to raw URL
+        title={t.name}
+        width="100%"
+        height="600px"
+        className="border rounded shadow"
+      />
+    ) : (
+      <img
+        src={t.image}
+        alt={t.name}
+        className="w-32 h-32 object-cover rounded-full shadow"
+      />
+    )}
+  </>
+)}
+
             </div>
           ))
         ) : (
