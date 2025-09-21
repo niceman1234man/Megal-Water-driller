@@ -5,10 +5,11 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-import pdfWorker from "pdfjs-dist/build/pdf.worker.min.js?url"; // 👈 this makes Vite copy the file and give you a URL
-
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
-
+// ✅ Correct Vite way to load the PDF worker
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.js",
+  import.meta.url
+).toString();
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
