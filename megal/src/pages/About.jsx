@@ -141,7 +141,7 @@ const AboutUs = () => {
               {license.filename || `License ${index + 1}`}
             </p>
             <iframe
-              src={`https://megal-water-driller.onrender.com${license.url}`}
+              src={license.url}
               title={`License ${index + 1}`}
               className="w-full h-64 border rounded"
             />
