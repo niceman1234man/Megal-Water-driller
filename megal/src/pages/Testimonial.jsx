@@ -20,13 +20,8 @@ export default function Testimonials() {
 
   const isPDF = (url) => url?.toLowerCase().endsWith(".pdf");
 
-  const getPDFPreview = (pdfUrl) => {
-    // Cloudinary transformation: first page, 200x200
-    return pdfUrl.replace(
-      "/upload/",
-      "/upload/so_0,w_200,h_200,c_fit/"
-    );
-  };
+  const getGoogleViewerURL = (pdfUrl) =>
+    `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -48,23 +43,17 @@ export default function Testimonials() {
                   <p className="text-gray-700 mt-2">{t.comment}</p>
                 </div>
 
-                {/* Display image or PDF preview */}
+                {/* Display image or Google Docs PDF Viewer */}
                 {t.image && (
                   <>
                     {isPDF(t.image) ? (
-                      <a
-                        href={t.image} // actual PDF opens in new tab
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex flex-col items-center mt-2 text-blue-700 underline"
-                      >
-                        <img
-                          src={getPDFPreview(t.image)}
-                          alt="PDF Preview"
-                          className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded shadow mb-2"
-                        />
-                        View PDF
-                      </a>
+                      <iframe
+                        src={getGoogleViewerURL(t.image)}
+                        title={`PDF of ${t.name}`}
+                        width="100%"
+                        height="500px"
+                        className="border rounded shadow"
+                      />
                     ) : (
                       <img
                         src={t.image}
