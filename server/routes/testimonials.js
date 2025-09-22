@@ -63,12 +63,20 @@ router.delete("/:id", async (req, res) => {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) return res.status(404).json({ error: "Not found" });
 
-    // Delete file from Cloudinary if exists
     if (testimonial.image) {
-      const publicId = testimonial.image.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(`testimonials/${publicId}`, {
-        resource_type: "auto",
-      });
+      const parts = testimonial.image.split("/");
+      const fileName = parts.pop(); // e.g. qioynf2xabphhnayjy7a.pdf
+      const publicId = fileName.split(".")[0]; // remove .pdf/.jpg
+      
+      // check extension
+      const isPdf = testimonial.image.toLowerCase().endsWith(".pdf");
+      const resourceType = isPdf ? "raw" : "image";
+
+      // ✅ adjust the folder name to match your upload
+      await cloudinary.uploader.destroy(
+        `megal_water_driller/${publicId}`, // folder + publicId
+        { resource_type: resourceType }
+      );
     }
 
     await Testimonial.findByIdAndDelete(req.params.id);
@@ -77,5 +85,6 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
