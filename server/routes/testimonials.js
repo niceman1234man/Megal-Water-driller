@@ -37,14 +37,20 @@ router.put("/:id", upload.single("file"), async (req, res) => {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) return res.status(404).json({ error: "Not found" });
 
-    // If new file uploaded → delete old one from Cloudinary
+    // If new file uploaded → delete old one first
     if (req.file && testimonial.image) {
-      const publicId = testimonial.image.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(`testimonials/${publicId}`, {
-        resource_type: "auto",
-      });
+      const parts = testimonial.image.split("/");
+      const fileName = parts.pop(); // qioynf2xabphhnayjy7a.pdf
+      const publicId = fileName.split(".")[0];
+      const resourceType = getResourceType(testimonial.image);
+
+      await cloudinary.uploader.destroy(
+        `megal_water_driller/${publicId}`,
+        { resource_type: resourceType }
+      );
     }
 
+    // Update fields
     testimonial.name = req.body.name || testimonial.name;
     testimonial.company = req.body.company || testimonial.company;
     testimonial.comment = req.body.comment || testimonial.comment;
@@ -56,6 +62,7 @@ router.put("/:id", upload.single("file"), async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // ✅ DELETE testimonial
 router.delete("/:id", async (req, res) => {
