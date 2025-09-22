@@ -131,7 +131,7 @@ const AboutUs = () => {
     </p>
 
     {about.licenses && about.licenses.length > 0 ? (
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6">
         {about.licenses.map((license, index) => (
           <div
             key={index}
