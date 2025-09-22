@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
- import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [form, setForm] = useState({ name: "", comment: "", company: "" });
@@ -16,20 +17,23 @@ export default function Testimonials() {
     try {
       const res = await axiosInstance.get("/api/testimonials");
       setTestimonials(res.data);
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to fetch testimonials.");
     }
   };
 
   const addOrUpdateTestimonial = async () => {
-    if (!form.name || !form.comment)
-      return alert("Name and comment are required.");
+    if (!form.name || !form.comment) {
+      toast.warn("Name and comment are required.");
+      return;
+    }
 
     const data = new FormData();
     data.append("name", form.name);
     data.append("comment", form.comment);
     data.append("company", form.company);
-    if (file) data.append("file", file); // file can be image or pdf
+    if (file) data.append("file", file);
 
     try {
       const config = {
@@ -45,32 +49,41 @@ export default function Testimonials() {
           data,
           config
         );
-        setTestimonials(
-          testimonials.map((t) => (t._id === editingId ? res.data : t))
+
+        setTestimonials((prev) =>
+          prev.map((t) =>
+            t._id.toString() === editingId.toString() ? res.data : t
+          )
         );
+        toast.success("Testimonial updated.");
       } else {
-        const res = await axiosInstance.post(
-          "/api/testimonials",
-          data,
-          config
-        );
-        setTestimonials([res.data, ...testimonials]);
+        const res = await axiosInstance.post("/api/testimonials", data, config);
+        setTestimonials((prev) => [res.data, ...prev]);
+        toast.success("Testimonial added.");
       }
+
       resetForm();
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to save testimonial.");
     }
   };
 
   const deleteTestimonial = async (id) => {
     if (!window.confirm("Delete this testimonial?")) return;
+
     try {
       await axiosInstance.delete(`/api/testimonials/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setTestimonials(testimonials.filter((t) => t._id !== id));
-    } catch {
-      toast.error("Failed to delete.");
+
+      setTestimonials((prev) =>
+        prev.filter((t) => t._id.toString() !== id.toString())
+      );
+      toast.success("Testimonial deleted.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete testimonial.");
     }
   };
 
@@ -80,7 +93,7 @@ export default function Testimonials() {
       comment: testimonial.comment,
       company: testimonial.company,
     });
-    setEditingId(testimonial._id);
+    setEditingId(testimonial._id.toString());
     setFile(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -100,7 +113,7 @@ export default function Testimonials() {
           {editingId ? "Edit Testimonial" : "Add Testimonial"}
         </h1>
 
-        {/* Add/Edit Testimonial Form */}
+        {/* Add/Edit Form */}
         <div className="mb-6 grid gap-3">
           <input
             type="text"
@@ -146,7 +159,7 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Testimonials List */}
+        {/* List */}
         {testimonials.length > 0 ? (
           testimonials.map((t) => (
             <div
@@ -159,23 +172,21 @@ export default function Testimonials() {
                 <p className="text-gray-700 mt-1">{t.comment}</p>
               </div>
 
-              {/* File display (image or PDF link) */}
-             {t.image && (
-  isPDF(t.image) ? (
-    <iframe
-      src={t.image}
-      title="testimonial-pdf"
-      className="w-48 h-48 border rounded"
-    ></iframe>
-  ) : (
-    <img
-      src={t.image}
-      alt="client"
-      className="w-20 h-20 object-cover rounded-full"
-    />
-  )
-)}
-
+              {/* File Preview */}
+              {t.image &&
+                (isPDF(t.image) ? (
+                  <iframe
+                    src={t.image}
+                    title="testimonial-pdf"
+                    className="w-32 h-32 border rounded"
+                  ></iframe>
+                ) : (
+                  <img
+                    src={t.image}
+                    alt="client"
+                    className="w-20 h-20 object-cover rounded-full"
+                  />
+                ))}
 
               <div className="flex flex-col gap-2">
                 <button
