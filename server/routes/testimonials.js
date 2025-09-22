@@ -4,8 +4,6 @@ const Testimonial = require("../models/Testimonial");
 const { upload } = require("../config/cloudinary");
 const { cloudinary } = require("../config/cloudinary");
 
-
-
 // ✅ GET all testimonials
 router.get("/", async (req, res) => {
   try {
@@ -28,6 +26,32 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     const saved = await newTestimonial.save();
     res.json(saved);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ UPDATE testimonial
+router.put("/:id", upload.single("file"), async (req, res) => {
+  try {
+    const testimonial = await Testimonial.findById(req.params.id);
+    if (!testimonial) return res.status(404).json({ error: "Not found" });
+
+    // If new file uploaded → delete old one from Cloudinary
+    if (req.file && testimonial.image) {
+      const publicId = testimonial.image.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`testimonials/${publicId}`, {
+        resource_type: "auto",
+      });
+    }
+
+    testimonial.name = req.body.name || testimonial.name;
+    testimonial.company = req.body.company || testimonial.company;
+    testimonial.comment = req.body.comment || testimonial.comment;
+    if (req.file) testimonial.image = req.file.path; // new Cloudinary URL
+
+    const updated = await testimonial.save();
+    res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
