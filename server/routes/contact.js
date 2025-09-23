@@ -3,7 +3,7 @@ const router = express.Router();
 const ContactMessage = require("../models/ContactMessage");
 const ContactInfo = require("../models/ContactInfo");
 const nodemailer = require("nodemailer");
-const auth = require("../middleware/authMiddleware");
+const auth = require("../middleware/auth");
 const Message = ContactMessage;
 const Contact = ContactInfo;
 

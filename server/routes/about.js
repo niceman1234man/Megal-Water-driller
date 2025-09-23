@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const About = require("../models/About");
 const { upload } = require("../config/cloudinary"); // use cloudinary storage
-const auth = require("../middleware/authMiddleware");
-
+const auth = require("../middleware/auth");
 // ✅ GET full about content
 router.get("/about", async (req, res) => {
   try {

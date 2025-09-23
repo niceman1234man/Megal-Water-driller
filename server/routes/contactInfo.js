@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ContactInfo = require("../models/ContactInfo");
-const auth = require("../middleware/authMiddleware");
+const auth = require("../middleware/auth");
 router.get("/contact", async (req, res) => {
   const info = await ContactInfo.findOne();
   console.log(info)
