@@ -1,7 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // clear auth token
+    navigate("/admin/login"); // redirect to login page
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
@@ -19,10 +26,21 @@ export default function Dashboard() {
           <AdminCard title="View Messages" path="/admin/messages" />
         </div>
 
-        <div className="mt-8 text-center">
-          <Link to="/admin/change-password" className="text-sm text-blue-500 hover:underline">
+        {/* Bottom section */}
+        <div className="mt-8 flex justify-between items-center">
+          <Link
+            to="/admin/change-password"
+            className="text-sm text-blue-500 hover:underline"
+          >
             Change Admin Password
           </Link>
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
