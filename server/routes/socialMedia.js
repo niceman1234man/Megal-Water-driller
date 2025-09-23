@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const SocialMedia = require("../models/SocialMedia");
-
+const auth = require("../middleware/auth");
 // GET all social media links
 router.get("/", async (req, res) => {
   const links = await SocialMedia.find();
@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST new social media link
-router.post("/", async (req, res) => {
+router.post("/",auth, async (req, res) => {
   try {
     const { platform, link } = req.body;
     if (!platform || !link) return res.status(400).json({ error: "Platform and link are required" });
@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT update existing social media link
-router.put("/:id", async (req, res) => {
+router.put("/:id",auth, async (req, res) => {
   try {
     const { platform, link } = req.body;
 
@@ -43,7 +43,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 // DELETE a social media link
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",auth, async (req, res) => {
   try {
   
     await SocialMedia.findByIdAndDelete(req.params.id);

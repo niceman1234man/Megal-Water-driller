@@ -3,7 +3,7 @@ const Gallery = require("../models/GallaryImage");
 const { upload } = require("../config/cloudinary");
 const { cloudinary } = require("../config/cloudinary");
 
-
+const auth = require("../middleware/auth");
 
 
 const router = express.Router();
@@ -18,7 +18,7 @@ router.get("/gallery", async (req, res) => {
   }
 });
 
-router.post("/gallery", upload.single("file"), async (req, res) => {
+router.post("/gallery",auth, upload.single("file"), async (req, res) => {
   try {
     console.log("➡️ Body:", req.body);
     console.log("➡️ File:", req.file);
@@ -46,7 +46,7 @@ router.post("/gallery", upload.single("file"), async (req, res) => {
 
 
 // Update media
-router.put("/gallery/:id", upload.single("file"), async (req, res) => {
+router.put("/gallery/:id",auth, upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
 
@@ -85,7 +85,7 @@ router.put("/gallery/:id", upload.single("file"), async (req, res) => {
 
 
 // Delete media
-router.delete("/gallery/:id", async (req, res) => {
+router.delete("/gallery/:id",auth, async (req, res) => {
   try {
     const media = await Gallery.findById(req.params.id);
     if (!media) return res.status(404).json({ error: "Media not found" });

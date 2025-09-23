@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const About = require("../models/About");
 const { upload } = require("../config/cloudinary"); // use cloudinary storage
+const auth = require("../middleware/authMiddleware");
 
 // ✅ GET full about content
 router.get("/about", async (req, res) => {
@@ -22,7 +23,7 @@ router.get("/about", async (req, res) => {
 });
 
 // ✅ UPDATE about fields (overview, mission, vision, goals)
-router.put("/about", async (req, res) => {
+router.put("/about",auth, async (req, res) => {
   try {
     const { overview, mission, vision, goals } = req.body;
     const updated = await About.findOneAndUpdate(
@@ -37,7 +38,7 @@ router.put("/about", async (req, res) => {
 });
 
 // ✅ UPLOAD a new license (PDF/image)
-router.post("/about/license", upload.single("file"), async (req, res) => {
+router.post("/about/license",auth, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
@@ -60,7 +61,7 @@ router.post("/about/license", upload.single("file"), async (req, res) => {
 });
 
 // ✅ DELETE a license by license ID
-router.delete("/about/license/:licenseId", async (req, res) => {
+router.delete("/about/license/:licenseId",auth, async (req, res) => {
   try {
     const { licenseId } = req.params;
     const about = await About.findOne();

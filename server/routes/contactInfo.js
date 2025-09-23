@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const ContactInfo = require("../models/ContactInfo");
-
+const auth = require("../middleware/authMiddleware");
 router.get("/contact", async (req, res) => {
   const info = await ContactInfo.findOne();
+  console.log(info)
   res.json(info || {});
 });
 
-router.put("/contact", async (req, res) => {
+router.put("/contact",auth, async (req, res) => {
  
   const updated = await ContactInfo.findOneAndUpdate({}, req.body, {
     upsert: true,

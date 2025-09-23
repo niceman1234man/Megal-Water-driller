@@ -3,6 +3,7 @@ const router = express.Router();
 const Testimonial = require("../models/Testimonial");
 const { upload } = require("../config/cloudinary");
 const { cloudinary } = require("../config/cloudinary");
+const auth = require("../middleware/auth");
 
 // ✅ GET all testimonials
 router.get("/", async (req, res) => {
@@ -15,7 +16,7 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ ADD testimonial (image/pdf upload to Cloudinary)
-router.post("/", upload.single("file"), async (req, res) => {
+router.post("/", auth,upload.single("file"), async (req, res) => {
   try {
     const newTestimonial = new Testimonial({
       name: req.body.name,
@@ -32,7 +33,7 @@ router.post("/", upload.single("file"), async (req, res) => {
 });
 
 // ✅ UPDATE testimonial
-router.put("/:id", upload.single("file"), async (req, res) => {
+router.put("/:id",auth, upload.single("file"), async (req, res) => {
   try {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) return res.status(404).json({ error: "Not found" });
@@ -65,7 +66,7 @@ router.put("/:id", upload.single("file"), async (req, res) => {
 
 
 // ✅ DELETE testimonial
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",auth, async (req, res) => {
   try {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) return res.status(404).json({ error: "Not found" });

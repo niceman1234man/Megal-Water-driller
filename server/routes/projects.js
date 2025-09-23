@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Project = require("../models/Project");
 const { upload, cloudinary } = require("../config/cloudinary"); // import cloudinary + upload
-
+const auth = require("../middleware/auth");
 // GET all projects
 router.get("/projects", async (req, res) => {
   try {
@@ -14,7 +14,7 @@ router.get("/projects", async (req, res) => {
 });
 
 // ADD new project
-router.post("/projects", upload.single("image"), async (req, res) => {
+router.post("/projects",auth, upload.single("image"), async (req, res) => {
   try {
     const newProject = new Project({
       ...req.body,
@@ -31,7 +31,7 @@ router.post("/projects", upload.single("image"), async (req, res) => {
 });
 
 // UPDATE project
-router.put("/projects/:id", upload.single("image"), async (req, res) => {
+router.put("/projects/:id",auth, upload.single("image"), async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) return res.status(404).json({ error: "Project not found" });
@@ -59,7 +59,7 @@ router.put("/projects/:id", upload.single("image"), async (req, res) => {
 });
 
 // DELETE project
-router.delete("/projects/:id", async (req, res) => {
+router.delete("/projects/:id",auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) return res.status(404).json({ error: "Project not found" });

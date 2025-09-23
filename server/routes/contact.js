@@ -3,7 +3,7 @@ const router = express.Router();
 const ContactMessage = require("../models/ContactMessage");
 const ContactInfo = require("../models/ContactInfo");
 const nodemailer = require("nodemailer");
-
+const auth = require("../middleware/authMiddleware");
 const Message = ContactMessage;
 const Contact = ContactInfo;
 
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // 📩 POST - Save message + send email
-router.post("/messages", async (req, res) => {
+router.post("/messages",auth, async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
@@ -73,7 +73,7 @@ router.get("/messages", async (req, res) => {
 });
 
 // 🗑️ DELETE message
-router.delete("/messages/:id", async (req, res) => {
+router.delete("/messages/:id",auth, async (req, res) => {
   try {
     await Message.findByIdAndDelete(req.params.id);
     res.sendStatus(204);

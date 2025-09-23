@@ -4,7 +4,7 @@ const router = express.Router();
 const Service = require("../models/Service");
 const Equipment = require("../models/Equipments");
 const Asset = require("../models/Assets");
-
+const auth = require("../middleware/auth");
 const { upload, cloudinary } = require("../config/cloudinary"); // ✅ Cloudinary setup
 
 // ----------------- SERVICES -----------------
@@ -20,7 +20,7 @@ router.get("/services", async (req, res) => {
 });
 
 // ADD new service
-router.post("/services", async (req, res) => {
+router.post("/services",auth, async (req, res) => {
   try {
     const newService = new Service(req.body);
     const saved = await newService.save();
@@ -31,7 +31,7 @@ router.post("/services", async (req, res) => {
 });
 
 // UPDATE service
-router.put("/services/:id", async (req, res) => {
+router.put("/services/:id",auth, async (req, res) => {
   try {
     const updated = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: "Service not found" });
@@ -42,7 +42,7 @@ router.put("/services/:id", async (req, res) => {
 });
 
 // DELETE service
-router.delete("/services/:id", async (req, res) => {
+router.delete("/services/:id",auth, async (req, res) => {
   try {
     await Service.findByIdAndDelete(req.params.id);
     res.sendStatus(204);
@@ -86,7 +86,7 @@ router.get("/equipments/:id", async (req, res) => {
 });
 
 // ADD new equipment
-router.post("/equipments", async (req, res) => {
+router.post("/equipments",auth, async (req, res) => {
   try {
     const newEquipment = new Equipment(req.body);
     const saved = await newEquipment.save();
@@ -97,7 +97,7 @@ router.post("/equipments", async (req, res) => {
 });
 
 // UPDATE equipment
-router.put("/equipments/:id", async (req, res) => {
+router.put("/equipments/:id",auth, async (req, res) => {
   try {
     const updated = await Equipment.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: "Equipment not found" });
@@ -108,7 +108,7 @@ router.put("/equipments/:id", async (req, res) => {
 });
 
 // DELETE equipment
-router.delete("/equipments/:id", async (req, res) => {
+router.delete("/equipments/:id",auth, async (req, res) => {
   try {
     await Equipment.findByIdAndDelete(req.params.id);
     res.sendStatus(204);
@@ -130,7 +130,7 @@ router.get("/assets", async (req, res) => {
 });
 
 // ADD new asset (with Cloudinary image)
-router.post("/assets", upload.single("image"), async (req, res) => {
+router.post("/assets",auth, upload.single("image"), async (req, res) => {
   try {
     const newAsset = new Asset({
       name: req.body.name,
@@ -146,7 +146,7 @@ router.post("/assets", upload.single("image"), async (req, res) => {
 });
 
 // UPDATE asset
-router.put("/assets/:id", upload.single("image"), async (req, res) => {
+router.put("/assets/:id",auth, upload.single("image"), async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id);
     if (!asset) return res.status(404).json({ error: "Asset not found" });
@@ -170,7 +170,7 @@ router.put("/assets/:id", upload.single("image"), async (req, res) => {
 });
 
 // DELETE asset
-router.delete("/assets/:id", async (req, res) => {
+router.delete("/assets/:id",auth, async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id);
     if (!asset) return res.status(404).json({ error: "Asset not found" });
