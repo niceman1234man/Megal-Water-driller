@@ -188,6 +188,14 @@ export default function Home() {
               </p>
             )}
           </div>
+          <div className="text-center mt-12">
+            <Link
+              to="/projects"
+              className="inline-block bg-blue-700 text-white font-semibold px-6 py-3 rounded shadow hover:bg-blue-800 transition"
+            >
+              Explore More Projects
+            </Link>
+          </div>
         </div>
       </section>
 
