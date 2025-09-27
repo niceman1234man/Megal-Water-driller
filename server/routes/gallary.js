@@ -9,7 +9,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 // Get all media
-router.get("/gallery", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const media = await Gallery.find().sort({ createdAt: -1 });
     res.json(media);
@@ -18,7 +18,7 @@ router.get("/gallery", async (req, res) => {
   }
 });
 
-router.post("/gallery",auth, upload.single("file"), async (req, res) => {
+router.post("/",auth, upload.single("file"), async (req, res) => {
   try {
     console.log("➡️ Body:", req.body);
     console.log("➡️ File:", req.file);
@@ -46,7 +46,7 @@ router.post("/gallery",auth, upload.single("file"), async (req, res) => {
 
 
 // Update media
-router.put("/gallery/:id",auth, upload.single("file"), async (req, res) => {
+router.put("/:id",auth, upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
 
@@ -85,7 +85,7 @@ router.put("/gallery/:id",auth, upload.single("file"), async (req, res) => {
 
 
 // Delete media
-router.delete("/gallery/:id",auth, async (req, res) => {
+router.delete("/:id",auth, async (req, res) => {
   try {
     const media = await Gallery.findById(req.params.id);
     if (!media) return res.status(404).json({ error: "Media not found" });
