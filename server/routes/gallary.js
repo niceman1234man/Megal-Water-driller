@@ -2,9 +2,7 @@ const express = require("express");
 const Gallery = require("../models/GallaryImage");
 const { upload } = require("../config/cloudinary");
 const { cloudinary } = require("../config/cloudinary");
-
 const auth = require("../middleware/auth");
-
 
 const router = express.Router();
 
@@ -18,21 +16,20 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/",auth, upload.single("file"), async (req, res) => {
+// Add media
+router.post("/", auth, upload.single("file"), async (req, res) => {
   try {
-    console.log("➡️ Body:", req.body);
-    console.log("➡️ File:", req.file);
-
     if (!req.file) {
       return res.status(400).json({ error: "File is required" });
     }
 
     const { location, client } = req.body;
+
     const newMedia = new Gallery({
       location,
       client,
-      url: req.file.path,
-      public_id: req.file.filename,
+      url: req.file.path, // ✅ Cloudinary secure URL
+      public_id: req.file.filename || req.file.public_id, // ✅ fallback
     });
 
     await newMedia.save();
@@ -43,20 +40,16 @@ router.post("/",auth, upload.single("file"), async (req, res) => {
   }
 });
 
-
-
 // Update media
-router.put("/:id",auth, upload.single("file"), async (req, res) => {
+router.put("/:id", auth, upload.single("file"), async (req, res) => {
   try {
     const { location, client } = req.body;
 
-    // find the existing item
     const existing = await Gallery.findById(req.params.id);
     if (!existing) {
       return res.status(404).json({ error: "Media not found" });
     }
 
-    // prepare update
     const updateData = {
       location: location || existing.location,
       client: client || existing.client,
@@ -64,10 +57,10 @@ router.put("/:id",auth, upload.single("file"), async (req, res) => {
       public_id: existing.public_id,
     };
 
-    // if new file uploaded, replace with Cloudinary URL
     if (req.file) {
-      updateData.url = req.file.path;       // ✅ Cloudinary URL
-      updateData.public_id = req.file.filename;
+      // Replace file
+      updateData.url = req.file.path;
+      updateData.public_id = req.file.filename || req.file.public_id;
     }
 
     const updated = await Gallery.findByIdAndUpdate(
@@ -83,20 +76,20 @@ router.put("/:id",auth, upload.single("file"), async (req, res) => {
   }
 });
 
-
 // Delete media
-router.delete("/:id",auth, async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const media = await Gallery.findById(req.params.id);
     if (!media) return res.status(404).json({ error: "Media not found" });
 
-    // Determine type based on file extension
     let resourceType = "image";
     if (media.url.endsWith(".mp4")) resourceType = "video";
     if (media.url.endsWith(".pdf")) resourceType = "raw";
 
     if (media.public_id) {
-      await cloudinary.uploader.destroy(media.public_id, { resource_type: resourceType });
+      await cloudinary.uploader.destroy(media.public_id, {
+        resource_type: resourceType,
+      });
     }
 
     await Gallery.findByIdAndDelete(req.params.id);
@@ -106,7 +99,5 @@ router.delete("/:id",auth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 module.exports = router;
