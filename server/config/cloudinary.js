@@ -14,10 +14,17 @@ cloudinary.config({
 // Storage settings
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: "megal_water_driller", // your folder name in cloudinary
-    resource_type: "auto", 
-    allowed_formats: ["jpg", "png", "jpeg", "mp4", "pdf"], // what you want to allow
+  params: async (req, file) => {
+    let resourceType = "image"; // default
+
+    if (file.mimetype.startsWith("video/")) resourceType = "video";
+    if (file.mimetype === "application/pdf") resourceType = "raw";
+
+    return {
+      folder: "megal_water_driller",
+      resource_type: resourceType,
+      allowed_formats: ["jpg", "png", "jpeg", "mp4", "pdf"],
+    };
   },
 });
 
