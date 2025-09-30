@@ -22,7 +22,7 @@ export default function Home() {
       .get("/api/projects")
       .then((res) => setProjects(res.data.slice(0, 3)))
       .catch(() => setProjects([]));
-    axios.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
+    axiosInstance.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
   }, []);
 
   useEffect(() => {
