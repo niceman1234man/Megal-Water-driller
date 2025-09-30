@@ -3,6 +3,7 @@ import heroImage from "../assets/home.jpg";
 import park from "../assets/park.jpg";
 import { Link } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
+import { contactInfo } from "../components/mock/mock";
 
 export default function Home() {
   const [services, setServices] = useState([]);
