@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { projects as mockProjects } from "../components/mock/mock";
-import { testimonials as mockTestimonials } from "../components/mock/mock";
-import { contactInfo } from "../components/mock/mock";
 import heroImage from "../assets/home.jpg";
 import park from "../assets/park.jpg";
 import { Link } from "react-router-dom";
@@ -25,6 +21,7 @@ export default function Home() {
       .get("/api/projects")
       .then((res) => setProjects(res.data.slice(0, 3)))
       .catch(() => setProjects([]));
+    axios.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
   }, []);
 
   useEffect(() => {
