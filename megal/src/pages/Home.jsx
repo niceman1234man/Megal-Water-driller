@@ -30,12 +30,7 @@ export default function Home() {
     //   axios.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
   }, []);
 
-  const projectsToRender =
-    Array.isArray(projects) && projects.length > 0 ? projects : mockProjects;
-  const testimonialsToRender =
-    Array.isArray(testimonials) && testimonials.length > 0
-      ? testimonials
-      : mockTestimonials;
+  
 
   return (
     <div>
@@ -206,7 +201,8 @@ export default function Home() {
           </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonialsToRender.map((t) => (
+               
+            {Array.isArray(testimonials) && testimonials.length > 0 ? (testimonials.map((t) => (
               <div
                 key={t.id}
                 className="bg-white border border-blue-100 rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 p-6 flex flex-col"
@@ -219,7 +215,11 @@ export default function Home() {
                   <p className="text-sm text-gray-500">{t.company}</p>
                 </div>
               </div>
-            ))}
+            ))) : (
+              <p className="text-gray-500 col-span-full text-center">
+                No testimonials available
+              </p>
+            )}
           </div>
 
           <div className="text-center mt-12">
