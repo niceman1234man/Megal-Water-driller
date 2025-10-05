@@ -2,32 +2,20 @@ const mongoose = require("mongoose");
 
 const ProjectSchema = new mongoose.Schema(
   {
-    title: { 
-      type: String,
-       required: true 
-      },
+    title: { type: String, required: true },
     description: String,
     client: String,
     startDate: Date,
     endDate: Date,
-    period:Date,
+    period: Date,
     status: {
       type: String,
       enum: ["ongoing", "completed", "planned"],
       default: "planned",
     },
-    percentageOfCompletion: {
-      type: Number,
-      min: 0,
-      max: 100,
-      default: 0,
-    },
+    percentageOfCompletion: { type: Number, min: 0, max: 100, default: 0 },
     budget: Number,
-    unit:{
-      type: String,
-      enum: ["USD", "ETB", "EUR", "GBP", "Other"],
-      default: "ETB",
-    },
+    unit: { type: String, enum: ["USD", "ETB", "EUR", "GBP"], default: "ETB" },
     contractor: {
       type: String,
       enum: ["Prime", "Sub Contractor"],
@@ -38,14 +26,21 @@ const ProjectSchema = new mongoose.Schema(
       enum: ["Accepted", "Rejected", "Pending"],
       default: "Pending",
     },
-    roleOfBinder:{
+    roleOfBinder: {
       type: String,
-      enum: [ "Contractor", "Sub Contractor"],
+      enum: ["Contractor", "Sub Contractor"],
       default: "Contractor",
     },
     location: String,
-    image: String,
-    public_id: String, // to store Cloudinary public_id for deletion
+
+    // 🧩 Store multiple media files (each with url + type)
+    media: [
+      {
+        url: String,
+        public_id: String,
+        type: { type: String, enum: ["image", "video"], default: "image" },
+      },
+    ],
   },
   { timestamps: true }
 );

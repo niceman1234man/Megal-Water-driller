@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Project = require("../models/Project");
-const { upload, cloudinary } = require("../config/cloudinary"); // import cloudinary + upload
+const { upload, cloudinary } = require("../config/cloudinary");
 const auth = require("../middleware/auth");
-// GET all projects
-router.get("/projects", async (req, res) => {
+
+// 🟢 GET all projects
+router.get("/", async (req, res) => {
   try {
     const projects = await Project.find().sort({ createdAt: -1 });
     res.json(projects);
@@ -13,16 +14,22 @@ router.get("/projects", async (req, res) => {
   }
 });
 
-// ADD new project
-router.post("/projects",auth, upload.single("image"), async (req, res) => {
+// 🟢 ADD new project (with optional image/video)
+router.post("/", auth, upload.single("file"), async (req, res) => {
   try {
-    const newProject = new Project({
+    const project = new Project({
       ...req.body,
-      image: req.file ? req.file.path : "",       // ✅ Cloudinary URL
-      public_id: req.file ? req.file.filename : "" // ✅ Cloudinary public_id
+      media: req.file
+        ? [
+            {
+              url: req.file.path,
+              public_id: req.file.filename,
+              type: req.file.mimetype.startsWith("video") ? "video" : "image",
+            },
+          ]
+        : [],
     });
-
-    const saved = await newProject.save();
+    const saved = await project.save();
     res.json(saved);
   } catch (err) {
     console.error("❌ Project create error:", err);
@@ -30,49 +37,79 @@ router.post("/projects",auth, upload.single("image"), async (req, res) => {
   }
 });
 
-// UPDATE project
-router.put("/projects/:id",auth, upload.single("image"), async (req, res) => {
+// 🟢 ADD new media (image/video) to existing project
+router.post("/:id/media", auth, upload.single("file"), async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) return res.status(404).json({ error: "Project not found" });
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-    // If new image uploaded, delete old one from Cloudinary
-    if (req.file) {
-      if (project.public_id) {
-        await cloudinary.uploader.destroy(project.public_id, { resource_type: "image" });
-      }
-      project.image = req.file.path;       // ✅ new Cloudinary URL
-      project.public_id = req.file.filename; // ✅ new Cloudinary public_id
-    }
+    const newMedia = {
+      url: req.file.path,
+      public_id: req.file.filename,
+      type: req.file.mimetype.startsWith("video") ? "video" : "image",
+    };
 
-    // Update other fields
-    project.title = req.body.title || project.title;
-    project.description = req.body.description || project.description;
-    project.location = req.body.location || project.location;
-
+    project.media.push(newMedia);
     const updated = await project.save();
     res.json(updated);
   } catch (err) {
-    console.error("❌ Project update error:", err);
+    console.error("❌ Add media error:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// DELETE project
-router.delete("/projects/:id",auth, async (req, res) => {
+// 🟢 DELETE a single media file from project
+router.delete("/:id/media/:mediaId", auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) return res.status(404).json({ error: "Project not found" });
 
-    // Delete image from Cloudinary
-    if (project.public_id) {
-      await cloudinary.uploader.destroy(project.public_id, { resource_type: "image" });
+    const mediaItem = project.media.id(req.params.mediaId);
+    if (!mediaItem) return res.status(404).json({ error: "Media not found" });
+
+    await cloudinary.uploader.destroy(mediaItem.public_id, {
+      resource_type: mediaItem.type === "video" ? "video" : "image",
+    });
+
+    mediaItem.remove();
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    console.error("❌ Delete media error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 🟢 UPDATE basic project info (without touching media)
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const updated = await Project.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("❌ Update project error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 🟢 DELETE entire project
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    for (const media of project.media) {
+      await cloudinary.uploader.destroy(media.public_id, {
+        resource_type: media.type === "video" ? "video" : "image",
+      });
     }
 
     await Project.findByIdAndDelete(req.params.id);
     res.sendStatus(204);
   } catch (err) {
-    console.error("❌ Project delete error:", err);
+    console.error("❌ Delete project error:", err);
     res.status(500).json({ error: err.message });
   }
 });
