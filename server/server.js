@@ -44,7 +44,7 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/api',contactInfoRoutes);
 app.use('/api',servicesRoutes)
-app.use('/api',projectsRoutes);
+app.use('/api/projects',projectsRoutes);
 app.use('/api/gallery',galleryRoutes);
 app.use('/api',aboutRoutes);
 app.use("/api/socialmedia", socialMediaRoutes);
