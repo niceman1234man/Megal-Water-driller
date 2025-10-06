@@ -168,84 +168,197 @@ export default function Projects() {
           {editingId ? "Edit Project" : "Add New Project"}
         </h1>
 
-        {/* Project Form */}
-        <div className="grid gap-3 mb-6 sm:grid-cols-2">
-          <label>
-            Project Title *
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="border p-2 rounded w-full"
-            />
-          </label>
+       {/* Project Form */}
+<div className="grid gap-3 mb-6 sm:grid-cols-2">
+  <label>
+    Project Title *
+    <input
+      type="text"
+      value={form.title}
+      onChange={(e) => setForm({ ...form, title: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
 
-          <label>
-            Client *
-            <input
-              type="text"
-              value={form.client}
-              onChange={(e) => setForm({ ...form, client: e.target.value })}
-              className="border p-2 rounded w-full"
-            />
-          </label>
+  <label>
+    Client *
+    <input
+      type="text"
+      value={form.client}
+      onChange={(e) => setForm({ ...form, client: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
 
-          <label>
-            Start Date *
-            <input
-              type="date"
-              value={form.startDate}
-              onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-              className="border p-2 rounded w-full"
-            />
-          </label>
+  <label>
+    Start Date *
+    <input
+      type="date"
+      value={form.startDate}
+      onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
 
-          <label>
-            End Date *
-            <input
-              type="date"
-              value={form.endDate}
-              onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-              className="border p-2 rounded w-full"
-            />
-          </label>
+  <label>
+    End Date *
+    <input
+      type="date"
+      value={form.endDate}
+      onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
 
-          <label className="sm:col-span-2">
-            Description
-            <textarea
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="border p-2 rounded w-full"
-            />
-          </label>
+  <label>
+    Period
+    <input
+      type="text"
+      value={form.period}
+      onChange={(e) => setForm({ ...form, period: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
 
-          <label className="sm:col-span-2">
-            Upload Image/Video (optional)
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="border p-2 rounded w-full"
-            />
-          </label>
+  <label>
+    Status
+    <select
+      value={form.status}
+      onChange={(e) => setForm({ ...form, status: e.target.value })}
+      className="border p-2 rounded w-full"
+    >
+      <option value="planned">Planned</option>
+      <option value="ongoing">Ongoing</option>
+      <option value="completed">Completed</option>
+    </select>
+  </label>
 
-          <div className="flex gap-2 sm:col-span-2 mt-4">
-            <button
-              onClick={addOrUpdateProject}
-              className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-            >
-              {editingId ? "Update Project" : "Add Project"}
-            </button>
-            {editingId && (
-              <button
-                onClick={resetForm}
-                className="bg-gray-300 text-black py-2 px-4 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </div>
+  <label>
+    Completion %
+    <input
+      type="number"
+      min="0"
+      max="100"
+      value={form.percentageOfCompletion}
+      onChange={(e) =>
+        setForm({
+          ...form,
+          percentageOfCompletion: e.target.value,
+        })
+      }
+      className="border p-2 rounded w-full"
+    />
+  </label>
+
+  <label>
+    Budget
+    <input
+      type="number"
+      value={form.budget}
+      onChange={(e) => setForm({ ...form, budget: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
+
+  <label>
+    Unit
+    <select
+      value={form.unit}
+      onChange={(e) => setForm({ ...form, unit: e.target.value })}
+      className="border p-2 rounded w-full"
+    >
+      <option value="ETB">ETB</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+      <option value="Other">Other</option>
+    </select>
+  </label>
+
+  <label>
+    Contractor Type
+    <select
+      value={form.contractor}
+      onChange={(e) => setForm({ ...form, contractor: e.target.value })}
+      className="border p-2 rounded w-full"
+    >
+      <option value="Prime">Prime</option>
+      <option value="Sub Contractor">Sub Contractor</option>
+    </select>
+  </label>
+
+  <label>
+    Acceptance
+    <select
+      value={form.acceptance}
+      onChange={(e) => setForm({ ...form, acceptance: e.target.value })}
+      className="border p-2 rounded w-full"
+    >
+      <option value="Pending">Pending</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+  </label>
+
+  <label>
+    Role of Binder
+    <select
+      value={form.roleOfBinder}
+      onChange={(e) => setForm({ ...form, roleOfBinder: e.target.value })}
+      className="border p-2 rounded w-full"
+    >
+      <option value="Contractor">Contractor</option>
+      <option value="Sub Contractor">Sub Contractor</option>
+    </select>
+  </label>
+
+  <label className="sm:col-span-2">
+    Location
+    <input
+      type="text"
+      value={form.location}
+      onChange={(e) => setForm({ ...form, location: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
+
+  <label className="sm:col-span-2">
+    Description
+    <textarea
+      value={form.description}
+      onChange={(e) => setForm({ ...form, description: e.target.value })}
+      className="border p-2 rounded w-full"
+    />
+  </label>
+
+  <label className="sm:col-span-2">
+    Upload Image/Video (optional)
+    <input
+      type="file"
+      accept="image/*,video/*"
+      onChange={(e) => setFile(e.target.files[0])}
+      className="border p-2 rounded w-full"
+    />
+  </label>
+
+  <div className="flex gap-2 sm:col-span-2 mt-4">
+    <button
+      onClick={addOrUpdateProject}
+      className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+    >
+      {editingId ? "Update Project" : "Add Project"}
+    </button>
+    {editingId && (
+      <button
+        onClick={resetForm}
+        className="bg-gray-300 text-black py-2 px-4 rounded hover:bg-gray-400"
+      >
+        Cancel
+      </button>
+    )}
+  </div>
+</div>
+
 
         {/* Project List */}
         {projects.length > 0 ? (
