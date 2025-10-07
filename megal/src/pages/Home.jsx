@@ -20,7 +20,7 @@ export default function Home() {
       .catch(() => setContact({}));
     axiosInstance
       .get("/api/projects")
-      .then((res) => setProjects(res.data.slice(0, 4)))
+      .then((res) => setProjects(res.data.slice(0, 6)))
       .catch(() => setProjects([]));
     axiosInstance.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
   }, []);
