@@ -23,7 +23,7 @@ export default function Navbar() {
       </div>
       {isOpen && (
         <div className="md:hidden bg-white border-t px-4 pb-4">
-          <Link to="/" onClick={() => setIsOpen(false)} className="block py-2">Home</Link>
+          < Link to="/" onClick={() => setIsOpen(false)} className="block py-2">Home</Link>
           <Link to="/services" onClick={() => setIsOpen(false)} className="block py-2">Services</Link>
           <Link to="/projects" onClick={() => setIsOpen(false)} className="block py-2">Projects</Link>
           <Link to="/gallery" onClick={() => setIsOpen(false)} className="block py-2">Gallery</Link>
