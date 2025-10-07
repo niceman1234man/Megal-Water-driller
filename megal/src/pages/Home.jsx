@@ -20,7 +20,7 @@ export default function Home() {
       .catch(() => setContact({}));
     axiosInstance
       .get("/api/projects")
-      .then((res) => setProjects(res.data.slice(0, 3)))
+      .then((res) => setProjects(res.data.slice(0, 4)))
       .catch(() => setProjects([]));
     axiosInstance.get("/api/testimonials").then((res) => setTestimonials(res.data.slice(0, 3))).catch(() => setTestimonials([]));
   }, []);
@@ -130,67 +130,112 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50" id="projects">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
-            Recent Projects
-          </h2>
+    <section className="py-16 bg-gray-50" id="projects">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
+          Recent Projects
+        </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.isArray(projects) && projects.length > 0 ? (
-              projects.map((project) => (
-                <div
-                  key={project._id || project.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 p-6 border-t-4 border-r-2 border-blue-600 overflow-hidden"
-                >
-                  <img
-                    src={`${project.image}`}
-                    alt={project.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-bold text-blue-700">{project.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      {project.description}
+        {/* ✅ Project Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.isArray(projects) && projects.length > 0 ? (
+            projects.map((project) => (
+              <div
+                key={project._id || project.id}
+                className="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 border-t-4 border-r-2 border-blue-600 overflow-hidden flex flex-col"
+              >
+                {/* ✅ Project Info First */}
+                <div className="p-6 flex-1">
+                  <h3 className="font-bold text-blue-700 text-lg mb-2">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-gray-700 mb-3">
+                    {project.description || "No description provided."}
+                  </p>
+
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>
+                      <strong>Client:</strong> {project.client || "N/A"}
                     </p>
-                    <div className="text-sm text-gray-500 italic mt-1">
-                      <p>Client: {project.client}</p>
-                      <p>Location: {project.location}</p>
-                      <p>
-                        Budget: {project.budget} {project.unit}
-                      </p>
-                      <p>Contractor: {project.contractor}</p>
-                      <p>
-                        Status: {project.status} (
-                        {project.percentageOfCompletion}
-                        %)
-                      </p>
-                      <p>Acceptance: {project.acceptance}</p>
-                      <p>Role of Binder: {project.roleOfBinder}</p>
-                      <p>
-                        Start: {new Date(project.startDate).toDateString()} |
-                        End: {new Date(project.endDate).toDateString()}
-                      </p>
-                    </div>
+                    <p>
+                      <strong>Location:</strong> {project.location || "N/A"}
+                    </p>
+                    <p>
+                      <strong>Budget:</strong>{" "}
+                      {project.budget ? `${project.budget} ${project.unit}` : "N/A"}
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {project.status} (
+                      {project.percentageOfCompletion || 0}%)
+                    </p>
+                    <p>
+                      <strong>Contractor:</strong> {project.contractor}
+                    </p>
+                    <p>
+                      <strong>Acceptance:</strong> {project.acceptance}
+                    </p>
+                    <p>
+                      <strong>Role of Binder:</strong> {project.roleOfBinder}
+                    </p>
+                    <p>
+                      <strong>Start:</strong>{" "}
+                      {project.startDate
+                        ? new Date(project.startDate).toDateString()
+                        : "N/A"}{" "}
+                      | <strong>End:</strong>{" "}
+                      {project.endDate
+                        ? new Date(project.endDate).toDateString()
+                        : "N/A"}
+                    </p>
                   </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-500 col-span-full text-center">
-                No projects available
-              </p>
-            )}
-          </div>
-          <div className="text-center mt-12">
-            <Link
-              to="/projects"
-              className="inline-block bg-blue-700 text-white font-semibold px-6 py-3 rounded shadow hover:bg-blue-800 transition"
-            >
-              Explore More Projects
-            </Link>
-          </div>
+
+                {/* ✅ Media at the Bottom */}
+                {project.media && project.media.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2 bg-gray-50 p-2 border-t">
+                    {project.media.map((m, i) => (
+                      <div key={i} className="relative w-full h-36 rounded overflow-hidden">
+                        {m.type === "video" ? (
+                          <video
+                            src={m.url}
+                            controls
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={m.url}
+                            alt={`media-${i}`}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-gray-100 text-gray-500 text-center py-3 border-t">
+                    No media available
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 col-span-full text-center">
+              No projects available
+            </p>
+          )}
         </div>
-      </section>
+
+        {/* ✅ Explore More Button */}
+        <div className="text-center mt-12">
+          <Link
+            to="/projects"
+            className="inline-block bg-blue-700 text-white font-semibold px-6 py-3 rounded shadow hover:bg-blue-800 transition"
+          >
+            Explore More Projects
+          </Link>
+        </div>
+      </div>
+    </section>
 
       <section
         className="py-20 bg-gradient-to-b from-white to-blue-50"
