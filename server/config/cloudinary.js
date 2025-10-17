@@ -11,39 +11,23 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ✅ Fixed Cloudinary storage configuration
+// Storage settings
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
-    let resourceType = "image";
+    let resourceType = "image"; // default
 
-    if (file.mimetype.startsWith("video")) resourceType = "video";
-    else if (file.mimetype === "application/pdf") resourceType = "raw";
+    if (file.mimetype.startsWith("video/")) resourceType = "video";
+    if (file.mimetype === "application/pdf") resourceType = "raw";
 
     return {
       folder: "megal_water_driller",
-      resource_type: resourceType, // ✅ key fix
-      format: file.mimetype.split("/")[1],
-      public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
+      resource_type: resourceType,
       allowed_formats: ["jpg", "png", "jpeg", "mp4", "pdf"],
     };
   },
 });
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 200 * 1024 * 1024 }, // ✅ allow up to 200MB
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "video/mp4",
-      "application/pdf",
-    ];
-    if (allowedTypes.includes(file.mimetype)) cb(null, true);
-    else cb(new Error("Unsupported file format"), false);
-  },
-});
+const upload = multer({ storage });
 
 module.exports = { cloudinary, upload };
