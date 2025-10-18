@@ -59,7 +59,7 @@ router.post("/:id/media", auth, upload.single("file"), async (req, res) => {
   }
 });
 
-// 🟢 DELETE a single media file from project
+// DELETE a single media file from project
 router.delete("/:id/media/:mediaId", auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -68,18 +68,22 @@ router.delete("/:id/media/:mediaId", auth, async (req, res) => {
     const mediaItem = project.media.id(req.params.mediaId);
     if (!mediaItem) return res.status(404).json({ error: "Media not found" });
 
+    // 🧩 Safe delete (auto handles both video & image)
     await cloudinary.uploader.destroy(mediaItem.public_id, {
-      resource_type: mediaItem.type === "video" ? "video" : "image",
+      resource_type: "auto",
     });
 
-    mediaItem.remove();
+    // Remove from project
+    project.media = project.media.filter((m) => m._id.toString() !== req.params.mediaId);
     await project.save();
+
     res.json(project);
   } catch (err) {
     console.error("❌ Delete media error:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // 🟢 UPDATE basic project info (without touching media)
 router.put("/:id", auth, async (req, res) => {
