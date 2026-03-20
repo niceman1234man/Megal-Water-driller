@@ -60,7 +60,7 @@ router.post("/:id/media", auth, upload.single("file"), async (req, res) => {
 });
 
 // DELETE a single media file from project
-router.delete("/:id/media/:mediaId", auth, async (req, res) => {
+router.delete("/:id/media/:mediaId", auth,async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) return res.status(404).json({ error: "Project not found" });
@@ -78,7 +78,7 @@ router.delete("/:id/media/:mediaId", auth, async (req, res) => {
 
     console.log("Cloudinary destroy result:", destroyResult);
 
-    if (!["ok", "not_found"].includes(destroyResult.result)) {
+    if (!["ok", "not_found", "not found", "not-found"].includes(destroyResult.result)) {
       console.error("Cloudinary failed to destroy media:", destroyResult);
       return res.status(500).json({ error: "Failed to delete media from Cloudinary" });
     }
@@ -88,9 +88,6 @@ router.delete("/:id/media/:mediaId", auth, async (req, res) => {
     const savedProject = await project.save();
     console.log("Media deleted successfully from project");
     res.json(savedProject);
-
-    console.log("Media deleted successfully from project");
-    res.json(project);
   } catch (err) {
     console.error("❌ Delete media error:", err);
     res.status(500).json({ error: err.message });
