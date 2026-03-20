@@ -50,7 +50,7 @@ export default function Home() {
 
             </h1>
             <h1 className="text-3xl md:text-4xl font-bold text-blue-700 leading-tight mt-2">
-              Megal Water Drilling
+              Megal Water Drilling PLC
             </h1>
             <p className="mt-6 text-gray-600 text-lg">
               Reliable, sustainable, and affordable water solutions across Ethiopia.
