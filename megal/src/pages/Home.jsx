@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import heroImage from "../assets/home.jpg";
-import park from "../assets/park.jpg";
+import park from "../assets/park.png";
 import { Link } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { contactInfo } from "../components/mock/mock";
+import Hero from "../assets/Hero.png";
+import { FaCertificate, FaGraduationCap, FaBook, FaPersonBooth, FaCalculator, FaProjectDiagram } from "react-icons/fa";
 
 export default function Home() {
   const [services, setServices] = useState([]);
@@ -35,45 +36,55 @@ export default function Home() {
 
   return (
     <div>
-      <section
-        className="relative h-screen bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
-        id="home"
-      >
-        {console.log(services)}
+     
 
-        <div className="absolute top-0 left-0 right-0 z-20 bg-blue-800 bg-opacity-90 text-white text-xs md:text-sm px-4 py-2 flex flex-col md:flex-row justify-center items-center gap-2">
-          {contact && contact.phones && contact.phones.length > 0 && (
-            <p>📞 {contact.phones.join(" / ")}</p>
-          )}
 
-          {contact && contact.emails && contact.emails.length > 0 && (
-            <p>📧 {contact.emails.join(" / ")}</p>
-          )}
 
-          {contact && contact.address && <p>🏠 {contact.address}</p>}
-        </div>
+        <section className="bg-gray-50 py-20">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
 
-        <div className="absolute inset-0 bg-blue-600 bg-opacity-70 flex items-center justify-center text-white text-center px-4 pt-20 z-10">
-          <div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-              Welcome <br />
-              to <br />
+          {/* Left Content */}
+          <div className="md:w-1/2">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800 leading-tight">
+              Work. Grow. Succeed with{" "}
+
+            </h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-blue-700 leading-tight mt-2">
               Megal Water Drilling
             </h1>
-            <p className="text-lg md:text-2xl max-w-2xl mx-auto">
-              Reliable, sustainable, and affordable water solutions across
-              Ethiopia.
+            <p className="mt-6 text-gray-600 text-lg">
+              Reliable, sustainable, and affordable water solutions across Ethiopia.
             </p>
-            <a
-              href="#services"
-              className="mt-6 inline-block bg-white text-blue-700 font-semibold px-6 py-3 rounded shadow hover:bg-blue-100 transition"
-            >
-              Explore Our Services
-            </a>
+
+            <div className="mt-8 flex gap-4">
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                <a href="#services">
+                      Explore Services →
+                </a>
+              
+              </button>
+             
+            </div>
+
+            {/* Small Features */}
+            <div className="flex gap-6 mt-10 text-gray-600">
+              <span className="flex items-center gap-2"><FaGraduationCap className="text-blue-700" /> Special Experts </span>
+              <span className="flex items-center gap-2"><FaBook className="text-blue-700" /> Exact Time Line</span>
+              <span className="flex items-center gap-2"><FaCertificate className="text-blue-700" /> Quality</span>
+            </div>
+          </div>
+
+          {/* Right Image */}
+          <div className="md:w-1/2 mt-10 md:mt-0">
+            <img
+              src={Hero}
+              alt="learning"
+              className="w-full max-w-md mx-auto"
+            />
           </div>
         </div>
       </section>
+
 
       <section className="py-16 bg-white text-blue-900" id="about">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
@@ -85,7 +96,7 @@ export default function Home() {
 
           <div>
             <h2 className="text-3xl font-bold mb-4">
-              About Megal Water Drilling
+               Megal Water Drilling
             </h2>
             <p className="text-gray-700 mb-4">
               Megal Water Drilling is a leading company in Ethiopia, delivering

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import heroImage from "../assets/home.jpg";
+import heroImage from "../assets/Hero.png";
 import license from "../assets/license.pdf";
 import axiosInstance from "../axiosInstance";
 
@@ -28,23 +28,7 @@ const AboutUs = () => {
         className="relative h-screen bg-cover bg-center flex items-center justify-center text-center"
         style={{ backgroundImage: `url(${heroImage})` }}
       >
-        <div className="absolute inset-0 bg-blue-600 bg-opacity-70"></div>
-        <div className="relative z-10 text-white px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            About Megal Water Drilling PLC
-          </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto">
-            Empowering communities through sustainable and professional water
-            well drilling solutions.
-          </p>
-          <a
-            href="#overview"
-            className="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce text-white text-3xl"
-            aria-label="Scroll Down"
-          >
-            ⬇️
-          </a>
-        </div>
+       
       </section>
 
       {/* Company Overview */}

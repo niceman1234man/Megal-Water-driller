@@ -16,10 +16,10 @@ const Services = () => {
     <section className="bg-white text-white py-0">
       <div className="">
         {/* Hero Header */}
-        <section className="h-screen bg-blue-500 text-white flex items-center justify-center px-4">
+        <section className="  text-blue-700 flex items-center justify-center px-4">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-white mb-4">Our Services</h1>
-            <p className="text-white max-w-2xl mx-auto text-lg">
+            <h1 className="text-4xl font-bold  mb-4">Our Services</h1>
+            <p className=" max-w-2xl mx-auto text-lg">
               We deliver professional and sustainable water well drilling solutions tailored to your needs.
             </p>
           </div>

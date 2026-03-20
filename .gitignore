@@ -24,3 +24,4 @@ megal/src/assets/v4.mp4
 *.njsproj
 *.sln
 *.sw?
+.env

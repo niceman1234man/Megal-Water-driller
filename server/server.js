@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require("path");
 const app = express();
 const PORT = 5000;
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const contactInfoRoutes = require('./routes/contactInfo');
 const servicesRoutes = require('./routes/services');
 const projectsRoutes = require('./routes/projects');
@@ -19,13 +19,7 @@ const authRoutes = require("./routes/auth");
 const dotenv = require("dotenv");
 dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
-// mongoose.connect("mongodb://127.0.0.1:27017/megalDB", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// })
-// .then(() => console.log("✅ Connected to MongoDB locally"))
-// .catch((err) => console.error("❌ MongoDB connection error:", err));
-
+console.log("MONGO_URI:", process.env.MONGO_URI);
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true

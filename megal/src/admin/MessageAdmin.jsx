@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
-import { FiTrash2, FiMail, FiMailOpen } from "react-icons/fi";
+import { FiTrash2, FiMail} from "react-icons/fi";
 import { toast } from "react-toastify";
 
 export default function MessageAdmin() {

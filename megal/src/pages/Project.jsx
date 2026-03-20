@@ -14,12 +14,12 @@ const Projects = () => {
   return (
     <section className="bg-white text-blue-900">
       {/* Hero Section */}
-      <section className="h-screen bg-blue-500 flex flex-col items-center justify-center text-center px-4 relative">
+      <section className=" flex flex-col items-center justify-center text-center px-4 relative">
         <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold e mb-4">
             Our Projects
           </h1>
-          <p className="text-white/90 text-lg">
+          <p className="text-lg">
             A showcase of water well drilling, pump installations, and hydrogeological
             projects we've proudly delivered across Ethiopia.
           </p>
