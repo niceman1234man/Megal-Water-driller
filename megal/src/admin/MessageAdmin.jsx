@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 export default function MessageAdmin() {
   const [messages, setMessages] = useState([]);
+  const [token] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
     fetchMessages();
@@ -22,7 +23,9 @@ export default function MessageAdmin() {
   const deleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;
     try {
-      await axiosInstance.delete(`/api/messages/${id}`);
+      await axiosInstance.delete(`/api/messages/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setMessages(messages.filter((m) => m._id !== id));
       toast.success("Message deleted");
     } catch {
