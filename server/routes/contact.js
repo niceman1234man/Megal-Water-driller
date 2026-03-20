@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // 📩 POST - Save message + send email
-router.post("/messages",auth, async (req, res) => {
+router.post("/messages", async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
