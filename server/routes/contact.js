@@ -34,28 +34,34 @@ router.post("/messages", async (req, res) => {
     const adminEmails = contact?.emails || [];
 
     if (adminEmails.length > 0) {
-      // Send email to all admins
-      await transporter.sendMail({
-        from: "Megal Water Driller",
-        to: adminEmails.join(","),
-        subject: `📩 New Contact Message: ${subject}`,
-        text: `
-          Name: ${name}
-          Email: ${email}
-          Subject: ${subject}
-          Message: ${message}
-        `,
-        html: `
-          <h3>New Message from Megal Water Driller Website</h3>
-          <p><b>Name:</b> ${name}</p>
-          <p><b>Email:</b> ${email}</p>
-          <p><b>Subject:</b> ${subject}</p>
-          <p><b>Message:</b> ${message}</p>
-        `,
-      });
+      try {
+        // Send email to all admins
+        await transporter.sendMail({
+          from: "Megal Water Driller",
+          to: adminEmails.join(","),
+          subject: `📩 New Contact Message: ${subject}`,
+          text: `
+            Name: ${name}
+            Email: ${email}
+            Subject: ${subject}
+            Message: ${message}
+          `,
+          html: `
+            <h3>New Message from Megal Water Driller Website</h3>
+            <p><b>Name:</b> ${name}</p>
+            <p><b>Email:</b> ${email}</p>
+            <p><b>Subject:</b> ${subject}</p>
+            <p><b>Message:</b> ${message}</p>
+          `,
+        });
+      } catch (emailErr) {
+        console.warn("⚠️ Email send failed (message still saved):", emailErr);
+      }
+    } else {
+      console.info("ℹ️ No admin emails configured, skipping notification email.");
     }
 
-    res.status(201).json({ success: true, message: "Message sent successfully!" });
+    res.status(201).json({ success: true, message: "Message saved successfully." });
   } catch (err) {
     console.error("❌ Error in /messages:", err);
     res.status(500).json({ error: "Internal server error" });
