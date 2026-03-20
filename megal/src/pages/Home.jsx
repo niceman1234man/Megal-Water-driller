@@ -148,7 +148,7 @@ export default function Home() {
         </h2>
 
         {/* ✅ Project Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.isArray(projects) && projects.length > 0 ? (
             projects.map((project) => (
               <div
