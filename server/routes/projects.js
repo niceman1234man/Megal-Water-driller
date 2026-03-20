@@ -68,15 +68,28 @@ router.delete("/:id/media/:mediaId", auth, async (req, res) => {
     const mediaItem = project.media.id(req.params.mediaId);
     if (!mediaItem) return res.status(404).json({ error: "Media not found" });
 
-    // 🧩 Safe delete (auto handles both video & image)
-    await cloudinary.uploader.destroy(mediaItem.public_id, {
-      resource_type: "auto",
+    console.log("Deleting media:", { mediaId: req.params.mediaId, public_id: mediaItem.public_id, type: mediaItem.type });
+
+    // 🧩 Safe delete (specify resource_type based on actual stored type)
+    const resourceType = mediaItem.type === "video" ? "video" : "image";
+    const destroyResult = await cloudinary.uploader.destroy(mediaItem.public_id, {
+      resource_type: resourceType,
     });
+
+    console.log("Cloudinary destroy result:", destroyResult);
+
+    if (!["ok", "not_found"].includes(destroyResult.result)) {
+      console.error("Cloudinary failed to destroy media:", destroyResult);
+      return res.status(500).json({ error: "Failed to delete media from Cloudinary" });
+    }
 
     // Remove from project
     project.media = project.media.filter((m) => m._id.toString() !== req.params.mediaId);
-    await project.save();
+    const savedProject = await project.save();
+    console.log("Media deleted successfully from project");
+    res.json(savedProject);
 
+    console.log("Media deleted successfully from project");
     res.json(project);
   } catch (err) {
     console.error("❌ Delete media error:", err);

@@ -30,7 +30,7 @@ mongoose.connect(MONGO_URI, {
 
 // Middleware
 app.use(cors({
-  origin: 'https://megal-water-driller.netlify.app', 
+  origin: ['https://megal-water-driller.netlify.app', 'http://localhost:5173'],
   methods: [ 'GET', 'POST', 'PUT', 'DELETE'],
   
 }));
